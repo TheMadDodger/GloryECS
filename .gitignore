@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+*.sln
+GloryECS/.vs/
+Debug
