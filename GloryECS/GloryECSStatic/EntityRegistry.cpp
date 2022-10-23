@@ -13,12 +13,12 @@ namespace GloryECS
 			delete it->second;
 		}
 		
-		//for (auto it = m_EntityViews.begin(); it != m_EntityViews.end(); it++)
-		//{
-		//	delete it->second;
-		//}
+		for (auto it = m_pEntityViews.begin(); it != m_pEntityViews.end(); it++)
+		{
+			delete it->second;
+		}
 
-		m_EntityViews.clear();
+		m_pEntityViews.clear();
 		m_pTypeViews.clear();
 	}
 
@@ -26,12 +26,28 @@ namespace GloryECS
 	{
 		EntityID newEntity = m_NextEntityID;
 		++m_NextEntityID;
-		m_EntityViews.emplace(newEntity, EntityView(this));
+		m_pEntityViews.emplace(newEntity, new EntityView(this));
 		return newEntity;
 	}
 
 	void EntityRegistry::DestroyEntity(EntityID entity)
 	{
 
+	}
+
+	BaseTypeView* EntityRegistry::GetTypeView(size_t typeHash)
+	{
+		if (m_pTypeViews.find(typeHash) == m_pTypeViews.end())
+			throw new std::exception("Type does not exist");
+
+		return m_pTypeViews[typeHash];
+	}
+
+	EntityView* EntityRegistry::GetEntityView(EntityID entity)
+	{
+		if (m_pEntityViews.find(entity) == m_pEntityViews.end())
+			throw new std::exception("Entity does not exist");
+
+		return m_pEntityViews[entity];
 	}
 }

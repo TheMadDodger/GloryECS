@@ -9,6 +9,7 @@ int main()
     {
         GloryECS::EntityRegistry reg;
         GloryECS::EntityID entity = reg.CreateEntity<Position>();
+        Position& position = reg.GetComponent<Position>(entity);
         MyComponent& component = reg.AddComponent<MyComponent>(entity, 5);
 
         for (size_t x = 0; x < 100; x++)

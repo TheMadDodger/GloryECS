@@ -2,7 +2,7 @@
 
 namespace GloryECS
 {
-	BaseTypeView::BaseTypeView(size_t typeHash) : m_TypeHash(typeHash), m_Entities()
+	BaseTypeView::BaseTypeView(size_t typeHash, EntityRegistry* pRegistry) : m_TypeHash(typeHash), m_pRegistry(pRegistry), m_Entities()
 	{
 	}
 

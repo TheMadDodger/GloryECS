@@ -8,14 +8,15 @@
 
 namespace GloryECS
 {
+	class EntityRegistry;
+
 	class BaseTypeView
 	{
 	public:
-		BaseTypeView(size_t typeHash);
+		BaseTypeView(size_t typeHash, EntityRegistry* pRegistry);
 		virtual ~BaseTypeView();
 
 		void Remove(EntityID entityID);
-
 		bool Contains(EntityID entityID);
 
 	protected:
@@ -24,13 +25,17 @@ namespace GloryECS
 	protected:
 		const size_t m_TypeHash;
 		std::vector<EntityID> m_Entities;
+		EntityRegistry* m_pRegistry;
+
+	private:
+		friend class EntityRegistry;
 	};
 
 	template<typename T>
 	class TypeView : public BaseTypeView
 	{
 	public:
-		TypeView() : BaseTypeView(std::hash<std::type_index>()(typeid(T))) {}
+		TypeView(EntityRegistry* pRegistry) : BaseTypeView(std::hash<std::type_index>()(typeid(T)), pRegistry) {}
 		virtual ~TypeView()
 		{
 			m_ComponentData.clear();

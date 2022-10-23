@@ -2,6 +2,7 @@
 #include "EntityID.h"
 #include "TypeView.h"
 #include "EntityView.h"
+#include "ComponentReferenceManager.h"
 #include <map>
 #include <unordered_map>
 
@@ -28,7 +29,20 @@ namespace GloryECS
 		Component& AddComponent(EntityID entity, Args&&... args)
 		{
 			TypeView<Component>* pTypeView = GetTypeView<Component>();
-			return pTypeView->Add(entity, std::forward<Args>(args)...);
+			Component& component = pTypeView->Add(entity, std::forward<Args>(args)...);
+			EntityView* pEntityView = GetEntityView(entity);
+			pEntityView->Add(pTypeView->m_TypeHash);
+			return component;
+		}
+
+		template<typename Component, typename... Args>
+		Component& AddComponent(EntityID entity, Glory::UUID uuid, Args&&... args)
+		{
+			TypeView<Component>* pTypeView = GetTypeView<Component>();
+			Component& component = pTypeView->Add(entity, std::forward<Args>(args)...);
+			EntityView* pEntityView = GetEntityView(entity);
+			pEntityView->Add(pTypeView->m_TypeHash, uuid);
+			return component;
 		}
 
 		template<typename Component>
@@ -36,19 +50,14 @@ namespace GloryECS
 		{
 			size_t hash = std::hash<std::type_index>()(typeid(Component));
 			if (m_pTypeViews.find(hash) == m_pTypeViews.end())
-				m_pTypeViews[hash] = new TypeView<Component>();
+				m_pTypeViews[hash] = new TypeView<Component>(this);
 
 			TypeView<Component>* pTypeView = (TypeView<Component>*)m_pTypeViews[hash];
 			return pTypeView;
 		}
 
-		BaseTypeView* GetTypeView(size_t typeHash)
-		{
-			if (m_pTypeViews.find(typeHash) == m_pTypeViews.end())
-				throw new std::exception("Type does not exist");
-
-			return m_pTypeViews[typeHash];
-		}
+		BaseTypeView* GetTypeView(size_t typeHash);
+		EntityView* GetEntityView(EntityID entity);
 
 		template<typename Component>
 		bool HasComponent(EntityID entity)
@@ -67,22 +76,18 @@ namespace GloryECS
 			return pTypeView->Get(entity);
 		}
 
-		//template<typename Component>
-		//void RemoveComponent(EntityID entity)
-		//{
-		//	std::unique_lock<std::mutex> lock(m_EntityComponentsLock);
-		//	for (size_t i = 0; i < m_ComponentsPerEntity[entity].size(); i++)
-		//	{
-		//		size_t index = m_ComponentsPerEntity[entity][i];
-		//		if (m_EntityComponents[index].GetType() != typeid(Component)) continue;
-		//		m_Systems.OnComponentRemoved(this, entity, &m_EntityComponents[index]);
-		//		m_UnusedComponentIndices.push_back(index);
-		//		m_ComponentsPerEntity[entity].erase(m_ComponentsPerEntity[entity].begin() + index);
-		//		auto it = std::remove(m_ComponentsPerType[typeid(Component)].begin(), m_ComponentsPerType[typeid(Component)].end(), index);
-		//		m_ComponentsPerType[typeid(Component)].erase(it);
-		//	}
-		//	lock.unlock();
-		//}
+		template<typename Component>
+		void RemoveComponent(EntityID entity)
+		{
+			EntityView* pEntityView = GetEntityView(entity);
+
+			TypeView<Component>* pTypeView = GetTypeView<Component>();
+			if (!pTypeView->Contains(entity))
+				throw new std::exception("Entity does not have component!");
+
+			pTypeView->Remove(entity);
+			pEntityView->Remove(pTypeView->m_TypeHash);
+		}
 
 		//void RemoveComponent(EntityID entity, size_t index);
 		//void ChangeComponentIndex(EntityID entity, size_t index, size_t newIndex);
@@ -126,11 +131,13 @@ namespace GloryECS
 
 	private:
 		// Entity data
-		std::map<EntityID, EntityView> m_EntityViews;
+		std::map<EntityID, EntityView*> m_pEntityViews;
 		EntityID m_NextEntityID;
 
 		// Basic type views
 		std::map<size_t, BaseTypeView*> m_pTypeViews;
+
+		ComponentReferenceManager m_ReferenceManager;
 
 		//EntitySystems m_Systems;
 	};
