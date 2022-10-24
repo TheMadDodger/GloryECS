@@ -33,3 +33,6 @@
 *.sln
 GloryECS/.vs/
 Debug
+*.vcxproj
+*.filters
+*.user

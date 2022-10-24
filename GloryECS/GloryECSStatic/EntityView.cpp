@@ -29,8 +29,8 @@ namespace GloryECS
 
     void EntityView::Add(size_t hash, Glory::UUID uuid)
     {
-        m_ComponentTypes.emplace(hash, uuid);
-        m_TypeToUUID.emplace(uuid, hash);
+        m_TypeToUUID.emplace(hash, uuid);
+        m_ComponentTypes.emplace(uuid, hash);
     }
 
     void EntityView::Remove(size_t hash)

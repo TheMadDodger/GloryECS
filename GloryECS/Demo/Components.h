@@ -1,4 +1,5 @@
 #pragma once
+#include <Reflection.h>
 
 struct MyComponent
 {
@@ -15,4 +16,14 @@ struct Position
 
     float _x;
     float _y;
+};
+
+struct ReflectableComponent
+{
+    ReflectableComponent(float f1, int i1, const char* cc1) : _f1(f1), _i1(i1), _cc1(cc1) {}
+
+    REFLECTABLE(ReflectableComponent,
+        (float) _f1,
+        (int)   _i1,
+        (const char*)   _cc1)
 };

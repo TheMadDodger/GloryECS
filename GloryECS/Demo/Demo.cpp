@@ -1,10 +1,21 @@
-#include <iostream>
-#include <EntityRegistry.h>
-#include "Components.h"
+#include "pch.h"
 
 int main()
 {
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+
+    GloryReflect::Reflect::RegisterType<ReflectableComponent>();
+
+    const GloryReflect::TypeData* pTypeData = ReflectableComponent::GetTypeData();
+
+    ReflectableComponent test(10.0f, 69, "Hello World!");
+
+    int a = 0;
+    const GloryReflect::FieldData* pFieldData = pTypeData->GetFieldData(1);
+    pFieldData->Get(&test, &a);
+
+    a = 420;
+    pFieldData->Set(&test, &a);
 
     {
         GloryECS::EntityRegistry reg;
