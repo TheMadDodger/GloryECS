@@ -26,6 +26,14 @@ namespace GloryECS
 		}
 
 		template<typename Component, typename... Args>
+		EntityID CreateEntity(Glory::UUID uuid, Args&&... args)
+		{
+			EntityID entityID = CreateEntity();
+			AddComponent<Component>(entityID, uuid, std::forward<Args>(args)...);
+			return entityID;
+		}
+
+		template<typename Component, typename... Args>
 		Component& AddComponent(EntityID entity, Args&&... args)
 		{
 			TypeView<Component>* pTypeView = GetTypeView<Component>();
