@@ -2,7 +2,6 @@
 #include "EntityID.h"
 #include "TypeView.h"
 #include "EntityView.h"
-#include "ComponentReferenceManager.h"
 #include <map>
 #include <unordered_map>
 
@@ -144,8 +143,6 @@ namespace GloryECS
 
 		// Basic type views
 		std::map<size_t, BaseTypeView*> m_pTypeViews;
-
-		ComponentReferenceManager m_ReferenceManager;
 
 		//EntitySystems m_Systems;
 	};
