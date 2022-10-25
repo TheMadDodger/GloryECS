@@ -96,20 +96,16 @@ namespace GloryECS
 			pEntityView->Remove(pTypeView->m_TypeHash);
 		}
 
-		//void RemoveComponent(EntityID entity, size_t index);
+		void RemoveComponent(EntityID entity, size_t typeHash);
+		void RemoveComponentAt(EntityID entity, size_t index);
 		//void ChangeComponentIndex(EntityID entity, size_t index, size_t newIndex);
-		//size_t ComponentCount(EntityID entity);
-		//
-		//void Clear(EntityID entity);
-		//
-		//size_t Alive();
-		//
-		//bool IsValid(EntityID entity);
-		//
+		size_t ComponentCount(EntityID entity);
+		void Clear(EntityID entity);
+		const size_t Alive() const;
+		const bool IsValid(EntityID entity) const;
+		
 		//void ForEach(std::function<void(EntityRegistry*, EntityID)> func);
 		//void ForEachComponent(EntityID entity, std::function<void(EntityRegistry*, EntityID, EntityComponentData*)> func);
-		//
-		//EntityComponentData* GetEntityComponentDataAt(EntityID entity, size_t index);
 		//
 		//template<typename C, typename Component>
 		//EntitySystem* RegisterSystem()

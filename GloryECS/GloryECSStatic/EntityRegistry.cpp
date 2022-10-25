@@ -32,7 +32,15 @@ namespace GloryECS
 
 	void EntityRegistry::DestroyEntity(EntityID entity)
 	{
-
+		EntityView* pEntityView = GetEntityView(entity);
+		for (auto it = pEntityView->m_ComponentTypes.begin(); it != pEntityView->m_ComponentTypes.end(); it++)
+		{
+			size_t typeHash = it->second;
+			BaseTypeView* pTypeView = GetTypeView(typeHash);
+			pTypeView->Remove(entity);
+		}
+		delete m_pEntityViews[entity];
+		m_pEntityViews.erase(entity);
 	}
 
 	BaseTypeView* EntityRegistry::GetTypeView(size_t typeHash)
@@ -49,5 +57,51 @@ namespace GloryECS
 			throw new std::exception("Entity does not exist");
 
 		return m_pEntityViews[entity];
+	}
+
+	void EntityRegistry::RemoveComponent(EntityID entity, size_t typeHash)
+	{
+		EntityView* pEntityView = GetEntityView(entity);
+		BaseTypeView* pTypeView = GetTypeView(typeHash);
+		pTypeView->Remove(entity);
+		m_pEntityViews[entity]->Remove(typeHash);
+	}
+
+	void EntityRegistry::RemoveComponentAt(EntityID entity, size_t index)
+	{
+		EntityView* pEntityView = GetEntityView(entity);
+		std::map<Glory::UUID, size_t>::iterator it = pEntityView->m_ComponentTypes.begin();
+		std::advance(it, index);
+		size_t typeHash = it->second;
+		BaseTypeView* pTypeView = GetTypeView(typeHash);
+		pTypeView->Remove(entity);
+		m_pEntityViews[entity]->Remove(typeHash);
+	}
+
+	size_t EntityRegistry::ComponentCount(EntityID entity)
+	{
+		EntityView* pEntityView = GetEntityView(entity);
+		return pEntityView->ComponentCount();
+	}
+
+	void EntityRegistry::Clear(EntityID entity)
+	{
+		EntityView* pEntityView = GetEntityView(entity);
+		for (auto it = pEntityView->m_ComponentTypes.begin(); it != pEntityView->m_ComponentTypes.end(); it++)
+		{
+			size_t typeHash = it->second;
+			BaseTypeView* pTypeView = GetTypeView(typeHash);
+			pTypeView->Remove(entity);
+		}
+	}
+
+	const size_t EntityRegistry::Alive() const
+	{
+		return m_pEntityViews.size();
+	}
+
+	const bool EntityRegistry::IsValid(EntityID entity) const
+	{
+		return m_pEntityViews.find(entity) != m_pEntityViews.end();
 	}
 }
