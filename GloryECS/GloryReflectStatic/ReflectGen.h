@@ -16,12 +16,13 @@ typedef typeName TypeName;\
 public:\
 	static const GloryReflect::TypeData* GetTypeData()\
 	{\
+		static const char* typeNameString = STRINGIZE(typeName);\
 		static const size_t TYPE_HASH = std::hash<std::type_index>()(typeid(typeName));\
 		static const int NUM_ARGS = NARGS(__VA_ARGS__);\
 		static const GloryReflect::FieldData pFields[] = {\
 			FOR_EACH(REFLECT_FIELD_INFO, __VA_ARGS__)\
 		};\
-		static const GloryReflect::TypeData pTypeData = GloryReflect::TypeData(pFields, TYPE_HASH, NUM_ARGS);\
+		static const GloryReflect::TypeData pTypeData = GloryReflect::TypeData(typeNameString, pFields, TYPE_HASH, NUM_ARGS);\
 		return &pTypeData;\
 	}
 

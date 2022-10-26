@@ -2,12 +2,17 @@
 
 namespace GloryReflect
 {
-	TypeData::TypeData(const FieldData* pFields, size_t typeHash, int numFields) : m_pFields(pFields), m_TypeHash(typeHash), m_FieldCount(numFields)
+	TypeData::TypeData(const char* typeName, const FieldData* pFields, size_t typeHash, int numFields) : m_TypeName(typeName), m_pFields(pFields), m_TypeHash(typeHash), m_FieldCount(numFields)
 	{
 	}
 
 	TypeData::~TypeData()
 	{
+	}
+
+	const char* TypeData::TypeName() const
+	{
+		return m_TypeName;
 	}
 
 	const size_t TypeData::TypeHash() const
