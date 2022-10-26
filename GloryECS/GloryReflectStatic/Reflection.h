@@ -13,7 +13,7 @@ namespace GloryReflect
 		static const TypeData* RegisterType(uint64_t flags = 0)
 		{
 			const TypeData* pTypeData = T::GetTypeData();
-			RegisterType(pTypeData->TypeHash(), pTypeData);
+			RegisterType(pTypeData->TypeHash(), pTypeData, flags);
 			m_pReflectInstance->m_pFactories.emplace(pTypeData->TypeHash(), new Factory<T>());
 			return pTypeData;
 		}
