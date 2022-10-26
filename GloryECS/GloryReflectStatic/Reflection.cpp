@@ -12,10 +12,22 @@ namespace GloryReflect
 		m_pReflectInstance->m_DataTypeFlags.emplace(hash, flags);
 	}
 
+	size_t Reflect::TypeCount()
+	{
+		return m_pReflectInstance->m_pTypeDatas.size();
+	}
+
 	const TypeData* Reflect::GetTyeData(size_t hash)
 	{
 		if (m_pReflectInstance->m_pTypeDatas.find(hash) == m_pReflectInstance->m_pTypeDatas.end()) return nullptr;
 		return m_pReflectInstance->m_pTypeDatas[hash];
+	}
+
+	const TypeData* Reflect::GetTyeDataAt(size_t index)
+	{
+		auto it = m_pReflectInstance->m_pTypeDatas.begin();
+		std::advance(it, index);
+		return it->second;
 	}
 
 	const uint64_t Reflect::GetTypeFlags(size_t hash)
@@ -33,6 +45,16 @@ namespace GloryReflect
 	{
 		if (m_pReflectInstance->m_FieldFlags.find(pFieldData) == m_pReflectInstance->m_FieldFlags.end()) return 0;
 		return m_pReflectInstance->m_FieldFlags[pFieldData];
+	}
+
+	std::map<size_t, const TypeData*>::iterator Reflect::GetTypeIterator()
+	{
+		return m_pReflectInstance->m_pTypeDatas.begin();
+	}
+
+	std::map<size_t, const TypeData*>::iterator Reflect::GetTypeIteratorEnd()
+	{
+		return m_pReflectInstance->m_pTypeDatas.end();
 	}
 
 	std::any Reflect::CreateAsValue(size_t hash)

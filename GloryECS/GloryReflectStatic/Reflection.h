@@ -20,10 +20,14 @@ namespace GloryReflect
 
 		static void RegisterType(size_t hash, const TypeData* pTypeData, uint64_t flags = 0);
 
+		static size_t TypeCount();
 		static const TypeData* GetTyeData(size_t hash);
+		static const TypeData* GetTyeDataAt(size_t index);
 		static const uint64_t GetTypeFlags(size_t hash);
 		static void SetFieldFlags(const FieldData* pFieldData, uint64_t flags = 0);
 		static uint64_t GetFieldFlags(const FieldData* pFieldData);
+		static std::map<size_t, const TypeData*>::iterator GetTypeIterator();
+		static std::map<size_t, const TypeData*>::iterator GetTypeIteratorEnd();
 
 		static std::any CreateAsValue(size_t hash);
 		static void* CreateAsPointer(size_t hash);
@@ -31,6 +35,7 @@ namespace GloryReflect
 		static Reflect* CreateReflectInstance();
 		static void DestroyReflectInstance();
 		static void SetReflectInstance(Reflect* pInstance);
+
 
 	private:
 		Reflect();
