@@ -4,6 +4,7 @@
 #include "EntityView.h"
 #include <map>
 #include <unordered_map>
+#include <functional>
 
 namespace GloryECS
 {
@@ -15,6 +16,12 @@ namespace GloryECS
 
 		EntityID CreateEntity();
 		void DestroyEntity(EntityID entity);
+
+		template<typename Component>
+		void RegisterComponent()
+		{
+			GetTypeView<Component>();
+		}
 
 		template<typename Component, typename... Args>
 		EntityID CreateEntity(Args&&... args)
@@ -105,7 +112,7 @@ namespace GloryECS
 		const bool IsValid(EntityID entity) const;
 		
 		//void ForEach(std::function<void(EntityRegistry*, EntityID)> func);
-		//void ForEachComponent(EntityID entity, std::function<void(EntityRegistry*, EntityID, EntityComponentData*)> func);
+		//void ForEachComponent(EntityID entity, std::function<void(EntityRegistry*, EntityID, size_t, size_t)> func);
 		//
 		//template<typename C, typename Component>
 		//EntitySystem* RegisterSystem()
