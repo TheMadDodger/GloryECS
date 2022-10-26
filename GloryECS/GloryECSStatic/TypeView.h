@@ -18,6 +18,8 @@ namespace GloryECS
 
 		void Remove(EntityID entityID);
 		bool Contains(EntityID entityID);
+		const size_t ComponentTypeHash() const;
+		virtual const std::type_index ComponentType() const = 0;
 
 	protected:
 		virtual void OnRemove(size_t index) = 0;
@@ -62,6 +64,11 @@ namespace GloryECS
 				throw new std::exception("Entity not in view");
 			size_t index = it - m_Entities.begin();
 			return m_ComponentData[index];
+		}
+		
+		virtual const std::type_index ComponentType() const override
+		{
+			return typeid(T);
 		}
 
 	private:

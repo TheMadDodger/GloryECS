@@ -24,4 +24,9 @@ namespace GloryECS
 	{
 		return std::find(m_Entities.begin(), m_Entities.end(), entityID) != m_Entities.end();
 	}
+
+	const size_t BaseTypeView::ComponentTypeHash() const
+	{
+		return m_TypeHash;
+	}
 }
