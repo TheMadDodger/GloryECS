@@ -5,16 +5,34 @@ namespace GloryReflect
 	Reflect* Reflect::m_pReflectInstance = nullptr;
 	bool Reflect::m_InstanceOwned = false;
 
-	void Reflect::RegisterType(size_t hash, const TypeData* pTypeData)
+	void Reflect::RegisterType(size_t hash, const TypeData* pTypeData, uint64_t flags)
 	{
 		if (m_pReflectInstance->m_pTypeDatas.find(hash) != m_pReflectInstance->m_pTypeDatas.end()) return;
 		m_pReflectInstance->m_pTypeDatas.emplace(hash, pTypeData);
+		m_pReflectInstance->m_DataTypeFlags.emplace(hash, flags);
 	}
 
 	const TypeData* Reflect::GetTyeData(size_t hash)
 	{
 		if (m_pReflectInstance->m_pTypeDatas.find(hash) == m_pReflectInstance->m_pTypeDatas.end()) return nullptr;
 		return m_pReflectInstance->m_pTypeDatas[hash];
+	}
+
+	const uint64_t Reflect::GetTypeFlags(size_t hash)
+	{
+		if (m_pReflectInstance->m_DataTypeFlags.find(hash) == m_pReflectInstance->m_DataTypeFlags.end()) return 0;
+		return m_pReflectInstance->m_DataTypeFlags[hash];
+	}
+
+	void Reflect::SetFieldFlags(const FieldData* pFieldData, uint64_t flags)
+	{
+		m_pReflectInstance->m_FieldFlags[pFieldData] = flags;
+	}
+
+	uint64_t Reflect::GetFieldFlags(const FieldData* pFieldData)
+	{
+		if (m_pReflectInstance->m_FieldFlags.find(pFieldData) == m_pReflectInstance->m_FieldFlags.end()) return 0;
+		return m_pReflectInstance->m_FieldFlags[pFieldData];
 	}
 
 	std::any Reflect::CreateAsValue(size_t hash)
