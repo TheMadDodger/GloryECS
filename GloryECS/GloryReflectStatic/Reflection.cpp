@@ -17,6 +17,24 @@ namespace GloryReflect
 		return m_pReflectInstance->m_pTypeDatas[hash];
 	}
 
+	std::any Reflect::CreateAsValue(size_t hash)
+	{
+		if (m_pReflectInstance->m_pFactories.find(hash) == m_pReflectInstance->m_pFactories.end())
+			throw new std::exception("Type not found");
+
+		const FactoryBase* pFactory = m_pReflectInstance->m_pFactories[hash];
+		return pFactory->CreateAsValue();
+	}
+
+	void* Reflect::CreateAsPointer(size_t hash)
+	{
+		if (m_pReflectInstance->m_pFactories.find(hash) == m_pReflectInstance->m_pFactories.end())
+			throw new std::exception("Type not found");
+
+		const FactoryBase* pFactory = m_pReflectInstance->m_pFactories[hash];
+		return pFactory->CreateAsPointer();
+	}
+
 	Reflect* Reflect::CreateReflectInstance()
 	{
 		m_InstanceOwned = true;
@@ -41,5 +59,12 @@ namespace GloryReflect
 
 	Reflect::~Reflect()
 	{
+		for (auto it = m_pFactories.begin(); it != m_pFactories.end(); it++)
+		{
+			delete it->second;
+		}
+
+		m_pTypeDatas.clear();
+		m_pFactories.clear();
 	}
 }

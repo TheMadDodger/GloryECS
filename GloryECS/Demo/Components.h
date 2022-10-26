@@ -20,6 +20,7 @@ struct Position
 
 struct ReflectableComponent
 {
+    ReflectableComponent() : _f1(0), _i1(0), _cc1("") {}
     ReflectableComponent(float f1, int i1, const char* cc1) : _f1(f1), _i1(i1), _cc1(cc1) {}
 
     REFLECTABLE(ReflectableComponent,

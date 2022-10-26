@@ -4,6 +4,8 @@ int main()
 {
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
+    GloryReflect::Reflect::CreateReflectInstance();
+
     GloryReflect::Reflect::RegisterType<ReflectableComponent>();
 
     const GloryReflect::TypeData* pTypeData = ReflectableComponent::GetTypeData();
@@ -13,6 +15,12 @@ int main()
     int a = 0;
     const GloryReflect::FieldData* pFieldData = pTypeData->GetFieldData(1);
     pFieldData->Get(&test, &a);
+
+    void* pointerTest = GloryReflect::Reflect::CreateAsPointer(pTypeData->TypeHash());
+    ReflectableComponent* testPointer = (ReflectableComponent*)pointerTest;
+
+    std::any valueTest = GloryReflect::Reflect::CreateAsValue(pTypeData->TypeHash());
+    ReflectableComponent testValue = std::any_cast<ReflectableComponent>(valueTest);
 
     a = 420;
     pFieldData->Set(&test, &a);
@@ -31,6 +39,9 @@ int main()
             }
         }
     }
+
+    GloryReflect::Reflect::DestroyReflectInstance();
+    delete testPointer;
 
     std::cout << "Hello World!\n";
     _CrtDumpMemoryLeaks();
