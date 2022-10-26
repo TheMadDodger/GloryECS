@@ -110,6 +110,9 @@ namespace GloryECS
 		void Clear(EntityID entity);
 		const size_t Alive() const;
 		const bool IsValid(EntityID entity) const;
+		const size_t TypeViewCount() const;
+		std::map<size_t, BaseTypeView*>::iterator GetTypeViewIterator();
+		std::map<size_t, BaseTypeView*>::iterator GetTypeViewIteratorEnd();
 		
 		//void ForEach(std::function<void(EntityRegistry*, EntityID)> func);
 		//void ForEachComponent(EntityID entity, std::function<void(EntityRegistry*, EntityID, size_t, size_t)> func);

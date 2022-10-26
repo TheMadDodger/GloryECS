@@ -104,4 +104,18 @@ namespace GloryECS
 	{
 		return m_pEntityViews.find(entity) != m_pEntityViews.end();
 	}
+	const size_t EntityRegistry::TypeViewCount() const
+	{
+		return m_pTypeViews.size();
+	}
+
+	std::map<size_t, BaseTypeView*>::iterator EntityRegistry::GetTypeViewIterator()
+	{
+		return m_pTypeViews.begin();
+	}
+
+	std::map<size_t, BaseTypeView*>::iterator EntityRegistry::GetTypeViewIteratorEnd()
+	{
+		return m_pTypeViews.end();
+	}
 }
