@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <xhash>
 
-#if UUID_DEFINED
+#if GLORY_UUID_DEFINED
 #include <UUID.h>
 #else
 namespace Glory

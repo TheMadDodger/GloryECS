@@ -24,7 +24,7 @@ project "GloryECSStatic"
 
 	defines
 	{
-		"UUID_DEFINED"
+		"GLORY_UUID_DEFINED"
 	}
 
 	filter "system:windows"
