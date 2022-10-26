@@ -29,13 +29,18 @@ namespace GloryReflect
 
 		static const TypeData* GetTyeData(size_t hash);
 
+		static Reflect* CreateReflectInstance();
+		static void DestroyReflectInstance();
+		static void SetReflectInstance(Reflect* pInstance);
+
 	private:
 		Reflect();
 		virtual ~Reflect();
 
 	private:
-		static std::map<size_t, const TypeData*> m_pTypeDatas;
+		std::map<size_t, const TypeData*> m_pTypeDatas;
+
+		static Reflect* m_pReflectInstance;
+		static bool m_InstanceOwned;
 	};
-
-
 }
