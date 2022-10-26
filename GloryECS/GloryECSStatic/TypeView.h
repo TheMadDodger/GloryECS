@@ -20,6 +20,7 @@ namespace GloryECS
 		bool Contains(EntityID entityID);
 		const size_t ComponentTypeHash() const;
 		virtual const std::type_index ComponentType() const = 0;
+		virtual void* Create(EntityID entityID) = 0;
 
 	protected:
 		virtual void OnRemove(size_t index) = 0;
@@ -69,6 +70,14 @@ namespace GloryECS
 		virtual const std::type_index ComponentType() const override
 		{
 			return typeid(T);
+		}
+
+		virtual void* Create(EntityID entityID) override
+		{
+			m_Entities.push_back(entityID);
+			size_t index = m_ComponentData.size();
+			m_ComponentData.push_back(T());
+			return &m_ComponentData[index];
 		}
 
 	private:
