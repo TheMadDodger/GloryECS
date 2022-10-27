@@ -36,7 +36,6 @@ namespace GloryReflect
 		static void DestroyReflectInstance();
 		static void SetReflectInstance(Reflect* pInstance);
 
-
 	private:
 		Reflect();
 		virtual ~Reflect();

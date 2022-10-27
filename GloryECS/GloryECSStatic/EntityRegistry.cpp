@@ -43,6 +43,15 @@ namespace GloryECS
 		m_pEntityViews.erase(entity);
 	}
 
+	void* EntityRegistry::CreateComponent(EntityID entityID, size_t typeHash, Glory::UUID uuid)
+	{
+		BaseTypeView* pTypeView = GetTypeView(typeHash);
+		void* pAddress = pTypeView->Create(entityID);
+		EntityView* pEntityView = GetEntityView(entityID);
+		pEntityView->Add(pTypeView->m_TypeHash);
+		return pAddress;
+	}
+
 	BaseTypeView* EntityRegistry::GetTypeView(size_t typeHash)
 	{
 		if (m_pTypeViews.find(typeHash) == m_pTypeViews.end())

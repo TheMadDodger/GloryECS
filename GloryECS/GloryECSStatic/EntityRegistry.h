@@ -59,6 +59,8 @@ namespace GloryECS
 			return component;
 		}
 
+		void* CreateComponent(EntityID entityID, size_t typeHash, Glory::UUID uuid);
+
 		template<typename Component>
 		TypeView<Component>* GetTypeView()
 		{
