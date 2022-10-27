@@ -68,6 +68,16 @@ namespace GloryECS
 		return m_pEntityViews[entity];
 	}
 
+	void* EntityRegistry::GetComponentAddress(EntityID entityID, Glory::UUID componentID)
+	{
+		EntityView* pEntityView = GetEntityView(entityID);
+		size_t hash = pEntityView->m_ComponentTypes.at(componentID);
+		BaseTypeView* pTypeView = GetTypeView(hash);
+
+		// TODO: Get number of the component in case of duplicates
+		return pTypeView->GetComponentAddress(entityID);
+	}
+
 	void EntityRegistry::RemoveComponent(EntityID entity, size_t typeHash)
 	{
 		EntityView* pEntityView = GetEntityView(entity);

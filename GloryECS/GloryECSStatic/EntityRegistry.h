@@ -75,6 +75,8 @@ namespace GloryECS
 		BaseTypeView* GetTypeView(size_t typeHash);
 		EntityView* GetEntityView(EntityID entity);
 
+		void* GetComponentAddress(EntityID entityID, Glory::UUID componentID);
+
 		template<typename Component>
 		bool HasComponent(EntityID entity)
 		{

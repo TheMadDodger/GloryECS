@@ -21,6 +21,7 @@ namespace GloryECS
 		const size_t ComponentTypeHash() const;
 		virtual const std::type_index ComponentType() const = 0;
 		virtual void* Create(EntityID entityID) = 0;
+		virtual void* GetComponentAddress(EntityID entityID, size_t number = 0) = 0;
 
 	protected:
 		virtual void OnRemove(size_t index) = 0;
@@ -77,6 +78,22 @@ namespace GloryECS
 			m_Entities.push_back(entityID);
 			size_t index = m_ComponentData.size();
 			m_ComponentData.push_back(T());
+			return &m_ComponentData[index];
+		}
+
+		virtual void* GetComponentAddress(EntityID entityID, size_t number = 0) override
+		{
+			auto it = std::find_if(m_Entities.begin(), m_Entities.end(), [&](EntityID othereEntity)
+			{
+				if (othereEntity != entityID) return false;
+				if (number != 0)
+				{
+					--number;
+					return false;
+				}
+				return true;
+			});
+			size_t index = m_Entities.end() - it;
 			return &m_ComponentData[index];
 		}
 
