@@ -93,7 +93,7 @@ namespace GloryECS
 				}
 				return true;
 			});
-			size_t index = m_Entities.end() - it;
+			size_t index = it - m_Entities.begin();
 			return &m_ComponentData[index];
 		}
 
