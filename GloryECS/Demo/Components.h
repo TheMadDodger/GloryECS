@@ -26,5 +26,7 @@ struct ReflectableComponent
     REFLECTABLE(ReflectableComponent,
         (float) _f1,
         (int)   _i1,
-        (const char*)   _cc1)
+        (const char*)   _cc1,
+        (std::vector<float>) _floats
+    )
 };

@@ -4,12 +4,73 @@ namespace GloryReflect
 {
 	Reflect* Reflect::m_pReflectInstance = nullptr;
 	bool Reflect::m_InstanceOwned = false;
+	const char* Reflect::BASIC_VALUE_NAME = "m_value";
 
 	void Reflect::RegisterType(size_t hash, const TypeData* pTypeData, uint64_t flags)
 	{
 		if (m_pReflectInstance->m_pTypeDatas.find(hash) != m_pReflectInstance->m_pTypeDatas.end()) return;
 		m_pReflectInstance->m_pTypeDatas.emplace(hash, pTypeData);
 		m_pReflectInstance->m_DataTypeFlags.emplace(hash, flags);
+		m_pReflectInstance->m_StringToTypeHash.emplace(pTypeData->TypeName(), hash);
+	}
+
+	const TypeData* Reflect::RegisterBasicType(const std::type_info& type, size_t size, uint64_t flags)
+	{
+		const size_t TYPE_HASH = std::hash<std::type_index>()(type);
+		if (m_pReflectInstance->m_pTypeDatas.find(TYPE_HASH) != m_pReflectInstance->m_pTypeDatas.end()) return m_pReflectInstance->m_pTypeDatas[TYPE_HASH];
+
+		const char* typeNameString = type.name();
+		const int NUM_ARGS = 1;
+		const FieldData pFields[] =
+		{
+			FieldData(TYPE_HASH, BASIC_VALUE_NAME, typeNameString, 0, size)
+		};
+		const TypeData* pTypeData = new TypeData(typeNameString, pFields, TYPE_HASH, NUM_ARGS);
+
+		RegisterType(TYPE_HASH, pTypeData, flags);
+		m_pReflectInstance->m_pManagedTypeDatas.push_back(pTypeData);
+		return pTypeData;
+	}
+
+	void Reflect::Tokenize(std::string str, std::vector<std::string>& tokens, char separator)
+	{
+		size_t pos = 0;
+		while ((pos = str.find(separator)) != std::string::npos)
+		{
+			std::string token = str.substr(0, pos);
+			tokens.push_back(token);
+			str.erase(0, pos + 1);
+		}
+	}
+
+	const TypeData* Reflect::RegisterTemplatedType(const char* typeName, size_t typeHash, size_t size)
+	{
+		if (m_pReflectInstance->m_pTypeDatas.find(typeHash) != m_pReflectInstance->m_pTypeDatas.end()) return m_pReflectInstance->m_pTypeDatas[typeHash];
+		std::string tempTypeName = typeName;
+
+		std::vector<std::string> tokens;
+		Tokenize(typeName, tokens);
+
+		const char* typeNameString = tokens[0].c_str();
+		const size_t TYPE_HASH = typeHash;
+		const int NUM_ARGS = 0;
+		const FieldData pFields[] =
+		{
+			FieldData(TYPE_HASH, BASIC_VALUE_NAME, typeNameString, 0, size)
+		};
+		const TypeData* pTypeData = new TypeData(typeName, pFields, TYPE_HASH, NUM_ARGS);
+
+		m_pReflectInstance->m_pTypeDatas.emplace(TYPE_HASH, pTypeData);
+		m_pReflectInstance->m_DataTypeFlags.emplace(TYPE_HASH, 0);
+
+		for (size_t i = 0; i < tokens.size(); i++)
+		{
+			m_pReflectInstance->m_StringToTypeHash.emplace(tokens[i], typeHash);
+		}
+
+		m_pReflectInstance->m_pManagedTypeDatas.push_back(pTypeData);
+
+		return pTypeData;
 	}
 
 	size_t Reflect::TypeCount()
@@ -21,6 +82,13 @@ namespace GloryReflect
 	{
 		if (m_pReflectInstance->m_pTypeDatas.find(hash) == m_pReflectInstance->m_pTypeDatas.end()) return nullptr;
 		return m_pReflectInstance->m_pTypeDatas[hash];
+	}
+
+	const TypeData* Reflect::GetTyeData(const std::string& name)
+	{
+		if (m_pReflectInstance->m_StringToTypeHash.find(name) == m_pReflectInstance->m_StringToTypeHash.end()) return nullptr;
+		size_t typeHash = m_pReflectInstance->m_StringToTypeHash[name];
+		return GetTyeData(typeHash);
 	}
 
 	const TypeData* Reflect::GetTyeDataAt(size_t index)
@@ -79,6 +147,24 @@ namespace GloryReflect
 	{
 		m_InstanceOwned = true;
 		m_pReflectInstance = new Reflect();
+
+		RegisterBasicType<int8_t>();
+		RegisterBasicType<int16_t>();
+		RegisterBasicType<int32_t>();
+		RegisterBasicType<int64_t>();
+		RegisterBasicType<uint8_t>();
+		RegisterBasicType<uint16_t>();
+		RegisterBasicType<uint32_t>();
+		RegisterBasicType<uint64_t>();
+		RegisterBasicType<char>();
+		RegisterBasicType<bool>();
+		RegisterBasicType<float>();
+		RegisterBasicType<double>();
+		RegisterBasicType<long>();
+		RegisterBasicType<unsigned long>();
+
+		RegisterTemplatedType("std::vector,vector", TT_Array, 0);
+
 		return m_pReflectInstance;
 	}
 
@@ -104,7 +190,16 @@ namespace GloryReflect
 			delete it->second;
 		}
 
+		for (size_t i = 0; i < m_pManagedTypeDatas.size(); i++)
+		{
+			delete m_pManagedTypeDatas[i];
+		}
+
 		m_pTypeDatas.clear();
+		m_pManagedTypeDatas.clear();
+		m_StringToTypeHash.clear();
+		m_DataTypeFlags.clear();
+		m_FieldFlags.clear();
 		m_pFactories.clear();
 	}
 }

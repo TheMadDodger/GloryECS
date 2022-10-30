@@ -3,13 +3,7 @@
 namespace GloryReflect
 {
 	using FieldType = size_t;
-
-	enum StorageType
-	{
-		ST_Value,
-		ST_Array,
-		ST_Struct,
-	};
+	using ElementType = size_t;
 
 	struct FieldData
 	{
@@ -18,6 +12,7 @@ namespace GloryReflect
 		virtual ~FieldData();
 
 		const FieldType Type() const;
+		const ElementType ArrayElementType() const;
 		const char* Name() const;
 		const char* TypeName() const;
 		const size_t Offset() const;
@@ -27,8 +22,8 @@ namespace GloryReflect
 		void Set(void* pAddress, void* value) const;
 
 	private:
-		StorageType m_StorageType;
 		FieldType m_Type;
+		ElementType m_ElementType;
 		const char* m_Name;
 		const char* m_TypeName;
 		size_t m_Offset;

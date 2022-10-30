@@ -1,15 +1,31 @@
 #include "FieldData.h"
+#include "Reflection.h"
 #include <string>
 
 namespace GloryReflect
 {
 	FieldData::FieldData(FieldType type, const char* name, const char* typeName, size_t offset, size_t size) :
 		m_Type(type),
+		m_ElementType(type),
 		m_Name(name),
 		m_TypeName(typeName),
 		m_Offset(offset),
 		m_Size(size)
 	{
+		std::string tempTypeName = typeName;
+		size_t templateIndex = tempTypeName.find('<');
+		size_t templateEndIndex = tempTypeName.find('>');
+		if (templateIndex == std::string::npos) return;
+		std::string templateTypeName = tempTypeName.substr(0, templateIndex);
+		std::string templatedTypeName = tempTypeName.substr(templateIndex + 1, templateEndIndex - templateIndex - 1 );
+		const TypeData* pTemplateType = Reflect::GetTyeData(templateTypeName);
+		const TypeData* pTemplatedType = Reflect::GetTyeData(templatedTypeName);
+
+		if (pTemplateType == nullptr || pTemplatedType == nullptr)
+			throw std::exception("FieldData construction failed! template class or template type is not registered!");
+
+		m_Type = pTemplateType->TypeHash();
+		m_ElementType = pTemplatedType->TypeHash();
 	}
 
 	FieldData::~FieldData()
@@ -19,6 +35,11 @@ namespace GloryReflect
 	const FieldType FieldData::Type() const
 	{
 		return m_Type;
+	}
+
+	const ElementType FieldData::ArrayElementType() const
+	{
+		return m_ElementType;
 	}
 
 	const char* FieldData::Name() const

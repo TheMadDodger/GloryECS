@@ -1,7 +1,9 @@
 #pragma once
 
 #define STRINGIZE(arg) STRINGIZE1(arg)
-#define STRINGIZE1(arg) #arg
+#define STRINGIZE1(arg) STRINGIZE2(arg)
+#define STRINGIZE2(arg) STRINGIZE3(arg)
+#define STRINGIZE3(arg) #arg
 
 #define CAT_TOKENS(x, y) CAT_PASS1((x, y))
 #define CAT_PASS1(x) PRIMITIVE_CAT x
@@ -48,12 +50,8 @@
 
 #define ARGPAIR(x) REM x
 
-
 #define ARGNAME(x) EAT x
 #define EAT(...)
 
 #define ARGNAME_AS_STRING(x) STRINGIZE(EAT x)
 #define ARGTYPE_AS_STRING(x) STRINGIZE(ARGTYPE(x))
-
-//#define ARGTYPE(x) ARGTYPE_PASS1(ARGTYPE_PASS1 x,) (___VA_ARGS__),
-//#define ARGTYPE_PASS1(...)

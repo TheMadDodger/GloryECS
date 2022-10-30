@@ -8,7 +8,7 @@
 ARGPAIR(__VA_ARGS__);
 
 #define REFLECT_FIELD_INFO(x)\
-GloryReflect::FieldData(std::hash<std::type_index>()(typeid(ARGNAME(x))), ARGNAME_AS_STRING(x), "", offsetof(TypeName, ARGNAME(x)), sizeof(ARGTYPE(x))),
+GloryReflect::FieldData(std::hash<std::type_index>()(typeid(ARGNAME(x))), ARGNAME_AS_STRING(x), ARGTYPE_AS_STRING(x), offsetof(TypeName, ARGNAME(x)), sizeof(ARGTYPE(x))),
 
 #define REFLECTABLE(typeName, ...)\
 FOR_EACH(REFLECTABLE_FIELD, __VA_ARGS__)\
