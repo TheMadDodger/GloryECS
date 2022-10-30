@@ -192,6 +192,12 @@ namespace GloryReflect
 		return m_pReflectInstance->m_pArrayTypes[elementTypeHash]->Size(pArrayAddress);
 	}
 
+	void* Reflect::ElementAddress(void* pArrayAddress, size_t elementTypeHash, size_t index)
+	{
+		if (m_pReflectInstance->m_pArrayTypes.find(elementTypeHash) == m_pReflectInstance->m_pArrayTypes.end()) return 0;
+		return m_pReflectInstance->m_pArrayTypes[elementTypeHash]->ElementAddress(pArrayAddress, index);
+	}
+
 	Reflect::Reflect()
 	{
 	}

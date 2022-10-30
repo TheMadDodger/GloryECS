@@ -38,6 +38,11 @@ int main()
         size_t size = GloryReflect::Reflect::ArraySize(pArrayAddress, pArrayFieldData->ArrayElementType());
         GloryReflect::Reflect::ResizeArray(pArrayAddress, pArrayFieldData->ArrayElementType(), 5);
         size = GloryReflect::Reflect::ArraySize(pArrayAddress, pArrayFieldData->ArrayElementType());
+
+        void* pElementAddress = GloryReflect::Reflect::ElementAddress(pArrayAddress, pArrayFieldData->ArrayElementType(), 4);
+        float* value = (float*)pElementAddress;
+        *value = 5.0f;
+        GloryReflect::Reflect::ResizeArray(pArrayAddress, pArrayFieldData->ArrayElementType(), 10);
     }
 
     GloryReflect::Reflect::DestroyReflectInstance();
