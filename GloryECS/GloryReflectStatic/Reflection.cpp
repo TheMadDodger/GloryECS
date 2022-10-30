@@ -14,7 +14,7 @@ namespace GloryReflect
 		m_pReflectInstance->m_StringToTypeHash.emplace(pTypeData->TypeName(), hash);
 	}
 
-	const TypeData* Reflect::RegisterBasicType(const std::type_info& type, size_t size, uint64_t flags)
+	const TypeData* Reflect::RegisterBasicType(const std::type_info& type, size_t size, const std::string& aliasName, uint64_t flags)
 	{
 		const size_t TYPE_HASH = std::hash<std::type_index>()(type);
 		if (m_pReflectInstance->m_pTypeDatas.find(TYPE_HASH) != m_pReflectInstance->m_pTypeDatas.end()) return m_pReflectInstance->m_pTypeDatas[TYPE_HASH];
@@ -29,6 +29,7 @@ namespace GloryReflect
 
 		RegisterType(TYPE_HASH, pTypeData, flags);
 		m_pReflectInstance->m_pManagedTypeDatas.push_back(pTypeData);
+		if (aliasName != "") m_pReflectInstance->m_StringToTypeHash.emplace(aliasName, TYPE_HASH);
 		return pTypeData;
 	}
 

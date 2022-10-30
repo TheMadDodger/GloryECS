@@ -27,9 +27,9 @@ namespace GloryReflect
 		}
 
 		template<typename T>
-		static const TypeData* RegisterBasicType(uint64_t flags = 0)
+		static const TypeData* RegisterBasicType(const std::string& aliasName = "", uint64_t flags = 0)
 		{
-			const TypeData* pTypeData = RegisterBasicType(typeid(T), sizeof(T), flags);
+			const TypeData* pTypeData = RegisterBasicType(typeid(T), sizeof(T), aliasName, flags);
 			m_pReflectInstance->m_pFactories.emplace(pTypeData->TypeHash(), new Factory<T>());
 			RegisterArrayType<T>(pTypeData);
 			return pTypeData;
@@ -62,7 +62,7 @@ namespace GloryReflect
 		virtual ~Reflect();
 
 		static void RegisterType(size_t hash, const TypeData* pTypeData, uint64_t flags = 0);
-		static const TypeData* RegisterBasicType(const std::type_info& type, size_t size, uint64_t flags = 0);
+		static const TypeData* RegisterBasicType(const std::type_info& type, size_t size, const std::string& aliasName = "", uint64_t flags = 0);
 
 		static void Tokenize(std::string str, std::vector<std::string>& tokens, char separator = ',');
 
