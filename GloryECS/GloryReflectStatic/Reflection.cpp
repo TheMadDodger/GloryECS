@@ -185,6 +185,12 @@ namespace GloryReflect
 		m_pReflectInstance->m_pArrayTypes[elementTypeHash]->Resize(pArrayAddress, newSize);
 	}
 
+	const size_t Reflect::ArraySize(void* pArrayAddress, size_t elementTypeHash)
+	{
+		if (m_pReflectInstance->m_pArrayTypes.find(elementTypeHash) == m_pReflectInstance->m_pArrayTypes.end()) return 0;
+		return m_pReflectInstance->m_pArrayTypes[elementTypeHash]->Size(pArrayAddress);
+	}
+
 	Reflect::Reflect()
 	{
 	}

@@ -35,7 +35,9 @@ int main()
 
         const GloryReflect::FieldData* pArrayFieldData = pTypeData->GetFieldData(3);
         void* pArrayAddress = pArrayFieldData->GetAddress(&test);
+        size_t size = GloryReflect::Reflect::ArraySize(pArrayAddress, pArrayFieldData->ArrayElementType());
         GloryReflect::Reflect::ResizeArray(pArrayAddress, pArrayFieldData->ArrayElementType(), 5);
+        size = GloryReflect::Reflect::ArraySize(pArrayAddress, pArrayFieldData->ArrayElementType());
     }
 
     GloryReflect::Reflect::DestroyReflectInstance();

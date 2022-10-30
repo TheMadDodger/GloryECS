@@ -55,6 +55,7 @@ namespace GloryReflect
 		static void SetReflectInstance(Reflect* pInstance);
 
 		static void ResizeArray(void* pArrayAddress, size_t elementTypeHash, size_t newSize);
+		static const size_t ArraySize(void* pArrayAddress, size_t elementTypeHash);
 
 	private:
 		Reflect();

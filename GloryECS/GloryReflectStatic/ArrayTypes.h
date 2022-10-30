@@ -7,6 +7,7 @@ namespace GloryReflect
 	{
 	public:
 		virtual void Resize(void* pArrayAddress, size_t newSize) const = 0;
+		virtual const size_t Size(void* pArrayAddress) const = 0;
 	};
 
 	template<typename T>
@@ -16,6 +17,11 @@ namespace GloryReflect
 		virtual void Resize(void* pArrayAddress, size_t newSize) const override
 		{
 			ResizeInternal((std::vector<T>*)pArrayAddress, newSize);
+		}
+
+		virtual const size_t Size(void* pArrayAddress) const override
+		{
+			return SizeInternal((std::vector<T>*)pArrayAddress);
 		}
 
 	private:
@@ -30,6 +36,11 @@ namespace GloryReflect
 			}
 
 			pArray->resize(newSize);
+		}
+
+		const size_t SizeInternal(std::vector<T>* pArray) const
+		{
+			return pArray->size();
 		}
 	};
 }
