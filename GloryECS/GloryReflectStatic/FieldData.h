@@ -21,6 +21,8 @@ namespace GloryReflect
 		void Get(void* pAddress, void* out) const;
 		void Set(void* pAddress, void* value) const;
 
+		void* GetAddress(void* pAddress) const;
+
 	private:
 		FieldType m_Type;
 		ElementType m_ElementType;

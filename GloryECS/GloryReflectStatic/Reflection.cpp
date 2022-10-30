@@ -179,6 +179,12 @@ namespace GloryReflect
 		m_pReflectInstance = pInstance;
 	}
 
+	void Reflect::ResizeArray(void* pArrayAddress, size_t elementTypeHash, size_t newSize)
+	{
+		if (m_pReflectInstance->m_pArrayTypes.find(elementTypeHash) == m_pReflectInstance->m_pArrayTypes.end()) return;
+		m_pReflectInstance->m_pArrayTypes[elementTypeHash]->Resize(pArrayAddress, newSize);
+	}
+
 	Reflect::Reflect()
 	{
 	}
@@ -186,6 +192,11 @@ namespace GloryReflect
 	Reflect::~Reflect()
 	{
 		for (auto it = m_pFactories.begin(); it != m_pFactories.end(); it++)
+		{
+			delete it->second;
+		}
+		
+		for (auto it = m_pArrayTypes.begin(); it != m_pArrayTypes.end(); it++)
 		{
 			delete it->second;
 		}
@@ -201,5 +212,6 @@ namespace GloryReflect
 		m_DataTypeFlags.clear();
 		m_FieldFlags.clear();
 		m_pFactories.clear();
+		m_pArrayTypes.clear();
 	}
 }

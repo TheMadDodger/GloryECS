@@ -2,6 +2,7 @@
 #include "ReflectGen.h"
 #include "TypeData.h"
 #include "Factory.h"
+#include "ArrayTypes.h"
 #include <map>
 #include <vector>
 
@@ -21,6 +22,7 @@ namespace GloryReflect
 			const TypeData* pTypeData = T::GetTypeData();
 			RegisterType(pTypeData->TypeHash(), pTypeData, flags);
 			m_pReflectInstance->m_pFactories.emplace(pTypeData->TypeHash(), new Factory<T>());
+			RegisterArrayType<T>(pTypeData);
 			return pTypeData;
 		}
 
@@ -29,6 +31,7 @@ namespace GloryReflect
 		{
 			const TypeData* pTypeData = RegisterBasicType(typeid(T), sizeof(T), flags);
 			m_pReflectInstance->m_pFactories.emplace(pTypeData->TypeHash(), new Factory<T>());
+			RegisterArrayType<T>(pTypeData);
 			return pTypeData;
 		}
 
@@ -51,6 +54,8 @@ namespace GloryReflect
 		static void DestroyReflectInstance();
 		static void SetReflectInstance(Reflect* pInstance);
 
+		static void ResizeArray(void* pArrayAddress, size_t elementTypeHash, size_t newSize);
+
 	private:
 		Reflect();
 		virtual ~Reflect();
@@ -60,6 +65,13 @@ namespace GloryReflect
 
 		static void Tokenize(std::string str, std::vector<std::string>& tokens, char separator = ',');
 
+		template<typename T>
+		static void RegisterArrayType(const TypeData* pTypeData)
+		{
+			const ArrayTypeBase* pArrayType = new ArrayType<T>();
+			m_pReflectInstance->m_pArrayTypes.emplace(pTypeData->TypeHash(), pArrayType);
+		}
+
 	private:
 		std::map<size_t, const TypeData*> m_pTypeDatas;
 		std::vector<const TypeData*> m_pManagedTypeDatas;
@@ -67,6 +79,7 @@ namespace GloryReflect
 		std::map<size_t, uint64_t> m_DataTypeFlags;
 		std::map<const FieldData*, uint64_t> m_FieldFlags;
 		std::map<size_t, const FactoryBase*> m_pFactories;
+		std::map<size_t, const ArrayTypeBase*> m_pArrayTypes;
 
 		static Reflect* m_pReflectInstance;
 		static bool m_InstanceOwned;

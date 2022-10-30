@@ -32,6 +32,10 @@ int main()
                 entity = reg.CreateEntity<Position>(x * 50.0f, y * 50.0f);
             }
         }
+
+        const GloryReflect::FieldData* pArrayFieldData = pTypeData->GetFieldData(3);
+        void* pArrayAddress = pArrayFieldData->GetAddress(&test);
+        GloryReflect::Reflect::ResizeArray(pArrayAddress, pArrayFieldData->ArrayElementType(), 5);
     }
 
     GloryReflect::Reflect::DestroyReflectInstance();

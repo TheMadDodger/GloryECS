@@ -73,4 +73,10 @@ namespace GloryReflect
 		char* p = (char*)pAddress;
 		memcpy(p + m_Offset, value, m_Size);
 	}
+
+	void* FieldData::GetAddress(void* pAddress) const
+	{
+		char* p = (char*)pAddress;
+		return p + m_Offset;
+	}
 }
