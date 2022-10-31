@@ -4,7 +4,7 @@ project "GloryECSStatic"
 	cppdialect "C++17"
 	staticruntime "Off"
 
-	targetdir ("../Build/Lib/%{cfg.buildcfg}/%{cfg.platform}")
+	targetdir ("%{lib_outdir}")
 	objdir ("%{cfg.buildcfg}/%{cfg.platform}")
 
 	files
@@ -15,16 +15,6 @@ project "GloryECSStatic"
 
 	vpaths
 	{
-	}
-
-	includedirs
-	{
-		"../../../%{GloryIncludeDir.core}",
-	}
-
-	defines
-	{
-		"GLORY_UUID_DEFINED"
 	}
 
 	filter "system:windows"
