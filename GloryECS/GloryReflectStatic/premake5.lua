@@ -4,7 +4,7 @@ project "GloryReflectStatic"
 	cppdialect "C++17"
 	staticruntime "Off"
 
-	targetdir ("../Build/Lib/%{cfg.buildcfg}/%{cfg.platform}")
+	targetdir ("%{lib_outdir}")
 	objdir ("%{cfg.buildcfg}/%{cfg.platform}")
 
 	files
