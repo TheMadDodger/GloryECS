@@ -21,11 +21,11 @@ namespace GloryReflect
 		const TypeData* pTemplateType = Reflect::GetTyeData(templateTypeName);
 		const TypeData* pTemplatedType = Reflect::GetTyeData(templatedTypeName);
 
-		if (pTemplateType == nullptr || pTemplatedType == nullptr)
+		if (pTemplateType == nullptr)
 			throw std::exception("FieldData construction failed! template class or template type is not registered!");
 
 		m_Type = pTemplateType->TypeHash();
-		m_ElementType = pTemplatedType->TypeHash();
+		m_ElementType = pTemplatedType ? pTemplatedType->TypeHash() : 0;
 	}
 
 	FieldData::~FieldData()
