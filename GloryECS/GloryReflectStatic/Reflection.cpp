@@ -38,6 +38,8 @@ namespace GloryReflect
 			tokens.push_back(token);
 			str.erase(0, pos + 1);
 		}
+
+		if (str.length() > 0 && tokens.size() <= 0) tokens.push_back(str);
 	}
 
 	const TypeData* Reflect::RegisterTemplatedType(const char* typeName, size_t typeHash, size_t size)
