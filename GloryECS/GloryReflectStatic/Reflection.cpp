@@ -20,12 +20,8 @@ namespace GloryReflect
 		if (m_pReflectInstance->m_pTypeDatas.find(TYPE_HASH) != m_pReflectInstance->m_pTypeDatas.end()) return m_pReflectInstance->m_pTypeDatas[TYPE_HASH];
 
 		const char* typeNameString = type.name();
-		const int NUM_ARGS = 1;
-		const FieldData pFields[] =
-		{
-			FieldData(TYPE_HASH, BASIC_VALUE_NAME, typeNameString, 0, size)
-		};
-		const TypeData* pTypeData = new TypeData(typeNameString, pFields, TYPE_HASH, NUM_ARGS);
+		const FieldData* pFields = new FieldData(TYPE_HASH, BASIC_VALUE_NAME, typeNameString, 0, size);
+		const TypeData* pTypeData = new TypeData(typeNameString, pFields, TYPE_HASH, 1);
 
 		RegisterType(TYPE_HASH, pTypeData, flags);
 		m_pReflectInstance->m_pManagedTypeDatas.push_back(pTypeData);
@@ -216,6 +212,11 @@ namespace GloryReflect
 
 		for (size_t i = 0; i < m_pManagedTypeDatas.size(); i++)
 		{
+			for (int j = 0; j < m_pManagedTypeDatas[i]->FieldCount(); j++)
+			{
+				const FieldData* pFieldData = m_pManagedTypeDatas[i]->GetFieldData(j);
+				delete pFieldData;
+			}
 			delete m_pManagedTypeDatas[i];
 		}
 
