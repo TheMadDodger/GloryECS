@@ -16,16 +16,25 @@ namespace GloryReflect
 
 	const TypeData* Reflect::RegisterBasicType(const std::type_info& type, size_t size, const std::string& aliasName, uint64_t flags)
 	{
-		const size_t TYPE_HASH = std::hash<std::type_index>()(type);
-		if (m_pReflectInstance->m_pTypeDatas.find(TYPE_HASH) != m_pReflectInstance->m_pTypeDatas.end()) return m_pReflectInstance->m_pTypeDatas[TYPE_HASH];
+		const size_t typeHash = std::hash<std::type_index>()(type);
+		if (m_pReflectInstance->m_pTypeDatas.find(typeHash) != m_pReflectInstance->m_pTypeDatas.end()) return m_pReflectInstance->m_pTypeDatas[typeHash];
 
 		const char* typeNameString = type.name();
-		const FieldData* pFields = new FieldData(TYPE_HASH, BASIC_VALUE_NAME, typeNameString, 0, size);
-		const TypeData* pTypeData = new TypeData(typeNameString, pFields, TYPE_HASH, 1);
+		const FieldData* pFields = new FieldData(typeHash, BASIC_VALUE_NAME, typeNameString, 0, size);
+		const TypeData* pTypeData = new TypeData(typeNameString, pFields, typeHash, 1);
 
-		RegisterType(TYPE_HASH, pTypeData, flags);
+		RegisterType(typeHash, pTypeData, flags);
 		m_pReflectInstance->m_pManagedTypeDatas.push_back(pTypeData);
-		if (aliasName != "") m_pReflectInstance->m_StringToTypeHash.emplace(aliasName, TYPE_HASH);
+		if (aliasName != "") m_pReflectInstance->m_StringToTypeHash.emplace(aliasName, typeHash);
+		return pTypeData;
+	}
+
+	const TypeData* Reflect::RegisterEnumType(const char* typeName, size_t enumTypeHash, const std::string& aliasName, uint64_t flags)
+	{
+		const TypeData* pTypeData = new TypeData(typeName, enumTypeHash);
+		RegisterType(enumTypeHash, pTypeData, flags);
+		m_pReflectInstance->m_pManagedTypeDatas.push_back(pTypeData);
+		if (aliasName != "") m_pReflectInstance->m_StringToTypeHash.emplace(aliasName, enumTypeHash);
 		return pTypeData;
 	}
 
@@ -162,7 +171,7 @@ namespace GloryReflect
 		RegisterBasicType<long>();
 		RegisterBasicType<unsigned long>();
 
-		RegisterTemplatedType("std::vector,vector", TT_Array, 0);
+		RegisterTemplatedType("std::vector,vector", (size_t)CustomTypeHash::Array, 0);
 
 		return m_pReflectInstance;
 	}
@@ -196,6 +205,12 @@ namespace GloryReflect
 		return m_pReflectInstance->m_pArrayTypes[elementTypeHash]->ElementAddress(pArrayAddress, index);
 	}
 
+	EnumType* Reflect::GetEnumType(size_t hash)
+	{
+		if (m_pReflectInstance->m_pEnumTypes.find(hash) == m_pReflectInstance->m_pEnumTypes.end()) return nullptr;
+		return m_pReflectInstance->m_pEnumTypes[hash];
+	}
+
 	Reflect::Reflect()
 	{
 	}
@@ -208,6 +223,11 @@ namespace GloryReflect
 		}
 		
 		for (auto it = m_pArrayTypes.begin(); it != m_pArrayTypes.end(); it++)
+		{
+			delete it->second;
+		}
+		
+		for (auto it = m_pEnumTypes.begin(); it != m_pEnumTypes.end(); it++)
 		{
 			delete it->second;
 		}
@@ -229,5 +249,6 @@ namespace GloryReflect
 		m_FieldFlags.clear();
 		m_pFactories.clear();
 		m_pArrayTypes.clear();
+		m_pEnumTypes.clear();
 	}
 }

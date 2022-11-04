@@ -4,6 +4,8 @@
 #include "TypeData.h"
 #include <typeindex>
 
+#pragma region Struct/Class Type Macros
+
 #define REFLECTABLE_FIELD(...)\
 ARGPAIR(__VA_ARGS__);
 
@@ -26,3 +28,22 @@ public:\
 		return &pTypeData;\
 	}
 
+#pragma endregion
+
+#pragma region Enum Type Macros
+
+#define REFLECT_ENUM_VALUE(value) value,
+#define REFLECT_ENUM_STRING_VALUE(value) STRINGIZE(value),
+
+#define REFLECTABLE_ENUM(enumName, ...) enum class enumName									\
+{																							\
+	FOR_EACH(REFLECT_ENUM_VALUE, __VA_ARGS__)												\
+};																							\
+																							\
+const std::string GloryReflect::Enum<enumName>::m_EnumStringValues[] = {					\
+	FOR_EACH(REFLECT_ENUM_STRING_VALUE, __VA_ARGS__)										\
+};																							\
+const size_t GloryReflect::Enum<enumName>::m_NumValues = NARGS(__VA_ARGS__);				\
+bool GloryReflect::Enum<enumName>::Valid() { return true; }									\
+
+#pragma endregion

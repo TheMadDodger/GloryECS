@@ -1,6 +1,8 @@
 #pragma once
 #include <Reflection.h>
 
+REFLECTABLE_ENUM(TestEnum, TE_One, TE_Two)
+
 struct MyComponent
 {
     MyComponent() : _a(0) {}

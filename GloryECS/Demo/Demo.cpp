@@ -9,6 +9,19 @@ int main()
     {
         GloryReflect::Reflect::RegisterType<ReflectableComponent>();
 
+        GloryReflect::Reflect::RegisterEnum<TestEnum>();
+
+        const GloryReflect::TypeData* pEnumTypeData = GloryReflect::Reflect::GetTyeData("enum TestEnum");
+
+
+        GloryReflect::EnumType* pEnumType = GloryReflect::Reflect::GetEnumType(std::hash<std::type_index>()(typeid(TestEnum)));
+
+        TestEnum e;
+        std::string out;
+        GloryReflect::Enum<TestEnum>().FromString("TE_One", e);
+        e = TestEnum::TE_Two;
+        GloryReflect::Enum<TestEnum>().ToString(e, out);
+
         const GloryReflect::TypeData* pTypeData = ReflectableComponent::GetTypeData();
 
         ReflectableComponent test(10.0f, 69, "Hello World!");

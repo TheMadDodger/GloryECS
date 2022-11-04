@@ -3,16 +3,13 @@
 #include "TypeData.h"
 #include "Factory.h"
 #include "ArrayTypes.h"
+#include "Enum.h"
+#include "CustomTypeHash.h"
 #include <map>
 #include <vector>
 
 namespace GloryReflect
 {
-	enum TemplatedTypes
-	{
-		TT_Array = 99,
-	};
-
 	class Reflect
 	{
 	public:
@@ -33,6 +30,19 @@ namespace GloryReflect
 			m_pReflectInstance->m_pFactories.emplace(pTypeData->TypeHash(), new Factory<T>());
 			RegisterArrayType<T>(pTypeData);
 			return pTypeData;
+		}
+
+		template<typename T>
+		static const TypeData* RegisterEnum(const std::string& aliasName = "", uint64_t flags = 0)
+		{
+			Enum<T>* pNewEnum = new Enum<T>();
+			if (!pNewEnum->Valid())
+				throw new std::exception("Enum is not a reflectable type!");
+
+			const size_t typeHash = std::hash<std::type_index>()(typeid(T));
+			m_pReflectInstance->m_pEnumTypes.emplace(typeHash, pNewEnum);
+
+			return RegisterEnumType(typeid(T).name(), typeHash, aliasName, flags);
 		}
 
 		static const TypeData* RegisterTemplatedType(const char* typeName, size_t typeHash, size_t size);
@@ -58,12 +68,15 @@ namespace GloryReflect
 		static const size_t ArraySize(void* pArrayAddress, size_t elementTypeHash);
 		static void* ElementAddress(void* pArrayAddress, size_t elementTypeHash, size_t index);
 
+		static EnumType* GetEnumType(size_t hash);
+
 	private:
 		Reflect();
 		virtual ~Reflect();
 
 		static void RegisterType(size_t hash, const TypeData* pTypeData, uint64_t flags = 0);
-		static const TypeData* RegisterBasicType(const std::type_info& type, size_t size, const std::string& aliasName = "", uint64_t flags = 0);
+		static const TypeData* RegisterBasicType(const std::type_info& type, size_t size, const std::string& aliasName, uint64_t flags);
+		static const TypeData* RegisterEnumType(const char* typeName, size_t enumTypeHash, const std::string& aliasName, uint64_t flags);
 
 		static void Tokenize(std::string str, std::vector<std::string>& tokens, char separator = ',');
 
@@ -82,6 +95,7 @@ namespace GloryReflect
 		std::map<const FieldData*, uint64_t> m_FieldFlags;
 		std::map<size_t, const FactoryBase*> m_pFactories;
 		std::map<size_t, const ArrayTypeBase*> m_pArrayTypes;
+		std::map<size_t, EnumType*> m_pEnumTypes;
 
 		static Reflect* m_pReflectInstance;
 		static bool m_InstanceOwned;

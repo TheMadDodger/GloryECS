@@ -28,6 +28,16 @@ namespace GloryReflect
 		m_ElementType = pTemplatedType ? pTemplatedType->TypeHash() : 0;
 	}
 
+	FieldData::FieldData(FieldType type, ElementType elementType, const char* name, const char* typeName, size_t offset, size_t size) :
+		m_Type(type),
+		m_ElementType(elementType),
+		m_Name(name),
+		m_TypeName(typeName),
+		m_Offset(offset),
+		m_Size(size)
+	{
+	}
+
 	FieldData::~FieldData()
 	{
 	}

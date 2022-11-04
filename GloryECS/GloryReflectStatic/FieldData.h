@@ -9,6 +9,7 @@ namespace GloryReflect
 	{
 	public:
 		FieldData(FieldType type, const char* name, const char* typeName, size_t offset, size_t size);
+		FieldData(FieldType type, ElementType elementType, const char* name, const char* typeName, size_t offset, size_t size);
 		virtual ~FieldData();
 
 		const FieldType Type() const;
