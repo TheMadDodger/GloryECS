@@ -48,10 +48,20 @@
 #define ARGTYPE_PASS4(x, ...) REM x
 #define REM(...) __VA_ARGS__
 
-#define ARGPAIR(x) REM x
+#define ARGPAIR(x) ARGTYPE(x) ARGNAME(x)
 
-#define ARGNAME(x) EAT x
+#define ARGNAME(x) ARGNAME_PASS1(EAT x)
+#define ARGNAME_PASS1(x) VAL x
 #define EAT(...)
 
-#define ARGNAME_AS_STRING(x) STRINGIZE(EAT x)
+#define ARGNAME_AS_STRING(x) STRINGIZE(ARGNAME(x))
 #define ARGTYPE_AS_STRING(x) STRINGIZE(ARGTYPE(x))
+
+#define VAL(x) x
+
+
+#define SPLIT_ARG1(x) VAL x
+#define SPLIT_ARG1_1(x) VAL x
+
+#define SPLIT_ARG2(x) SPLIT_ARG2_1(EAT x)
+#define SPLIT_ARG2_1(x) VAL x
