@@ -5,7 +5,7 @@
 namespace GloryReflect
 {
 	FieldData::FieldData(FieldType type, const char* name, const char* typeName, size_t offset, size_t size) :
-		m_Type(type),
+		m_Type(Reflect::GetCustomTypeHash(type)),
 		m_ElementType(type),
 		m_Name(name),
 		m_TypeName(typeName),

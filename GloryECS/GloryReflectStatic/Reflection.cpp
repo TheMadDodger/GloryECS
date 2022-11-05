@@ -20,8 +20,8 @@ namespace GloryReflect
 		if (m_pReflectInstance->m_pTypeDatas.find(typeHash) != m_pReflectInstance->m_pTypeDatas.end()) return m_pReflectInstance->m_pTypeDatas[typeHash];
 
 		const char* typeNameString = type.name();
-		const FieldData* pFields = new FieldData(typeHash, BASIC_VALUE_NAME, typeNameString, 0, size);
-		const TypeData* pTypeData = new TypeData(typeNameString, pFields, typeHash, 1);
+		const FieldData* pFields = new FieldData(typeHash, typeHash, BASIC_VALUE_NAME, typeNameString, 0, size);
+		const TypeData* pTypeData = new TypeData(typeNameString, pFields, typeHash, 1, true);
 
 		RegisterType(typeHash, pTypeData, flags);
 		m_pReflectInstance->m_pManagedTypeDatas.push_back(pTypeData);
@@ -35,6 +35,7 @@ namespace GloryReflect
 		RegisterType(enumTypeHash, pTypeData, flags);
 		m_pReflectInstance->m_pManagedTypeDatas.push_back(pTypeData);
 		if (aliasName != "") m_pReflectInstance->m_StringToTypeHash.emplace(aliasName, enumTypeHash);
+		m_pReflectInstance->m_pManagedTypeDatas.push_back(pTypeData);
 		return pTypeData;
 	}
 
@@ -209,6 +210,15 @@ namespace GloryReflect
 	{
 		if (m_pReflectInstance->m_pEnumTypes.find(hash) == m_pReflectInstance->m_pEnumTypes.end()) return nullptr;
 		return m_pReflectInstance->m_pEnumTypes[hash];
+	}
+
+	size_t Reflect::GetCustomTypeHash(size_t hash)
+	{
+		if (hash <= 100) return hash;
+		if (GetEnumType(hash)) return (size_t)CustomTypeHash::Enum;
+		const TypeData* pTypeData = GetTyeData(hash);
+		if (!pTypeData || !pTypeData->IsBasicType()) return (size_t)CustomTypeHash::Struct;
+		return hash;
 	}
 
 	Reflect::Reflect()

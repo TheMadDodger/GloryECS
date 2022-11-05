@@ -7,9 +7,8 @@ int main()
     GloryReflect::Reflect::CreateReflectInstance();
     
     {
-        GloryReflect::Reflect::RegisterType<ReflectableComponent>();
-
         GloryReflect::Reflect::RegisterEnum<TestEnum>();
+        GloryReflect::Reflect::RegisterType<ReflectableComponent>();
 
         const GloryReflect::TypeData* pEnumTypeData = GloryReflect::Reflect::GetTyeData("enum TestEnum");
 
@@ -27,7 +26,7 @@ int main()
         ReflectableComponent test(10.0f, 69, "Hello World!");
 
         int a = 0;
-        const GloryReflect::FieldData* pFieldData = pTypeData->GetFieldData(1);
+        const GloryReflect::FieldData* pFieldData = pTypeData->GetFieldData(4);
         pFieldData->Get(&test, &a);
 
         a = 420;

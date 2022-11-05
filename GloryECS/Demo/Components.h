@@ -9,6 +9,7 @@ struct MyComponent
     MyComponent(int a) : _a(a) {}
 
     int _a;
+    
 };
 
 struct Position
@@ -22,13 +23,14 @@ struct Position
 
 struct ReflectableComponent
 {
-    ReflectableComponent() : _f1(0), _i1(0), _cc1("") {}
-    ReflectableComponent(float f1, int i1, const char* cc1) : _f1(f1), _i1(i1), _cc1(cc1) {}
+    ReflectableComponent() : _f1(0), _i1(0), _cc1(""), _enum(TestEnum::TE_One) {}
+    ReflectableComponent(float f1, int i1, const char* cc1) : _f1(f1), _i1(i1), _cc1(cc1), _enum(TestEnum::TE_One) {}
 
     REFLECTABLE(ReflectableComponent,
         (float) _f1,
         (int)   _i1,
         (const char*)   _cc1,
-        (std::vector<float>) _floats
+        (std::vector<float>) _floats,
+        (TestEnum)  _enum
     )
 };

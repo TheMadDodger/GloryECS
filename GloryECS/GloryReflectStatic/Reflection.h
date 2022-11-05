@@ -70,6 +70,8 @@ namespace GloryReflect
 
 		static EnumType* GetEnumType(size_t hash);
 
+		static size_t GetCustomTypeHash(size_t hash);
+
 	private:
 		Reflect();
 		virtual ~Reflect();
