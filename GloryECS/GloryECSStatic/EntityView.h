@@ -13,7 +13,7 @@ namespace GloryECS
 		EntityView(EntityRegistry* pRegistry);
 
 		size_t ComponentCount();
-		size_t ComponentUUIDAt(size_t index);
+		Glory::UUID ComponentUUIDAt(size_t index);
 		size_t ComponentTypeAt(size_t index);
 		size_t ComponentType(Glory::UUID uuid);
 		std::map<Glory::UUID, size_t>::iterator GetIterator();

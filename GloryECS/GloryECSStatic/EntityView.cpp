@@ -12,7 +12,7 @@ namespace GloryECS
         return m_ComponentOrder.size();
     }
 
-    size_t EntityView::ComponentUUIDAt(size_t index)
+    Glory::UUID EntityView::ComponentUUIDAt(size_t index)
     {
         return m_ComponentOrder[index];
     }

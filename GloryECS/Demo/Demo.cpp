@@ -36,6 +36,10 @@ int main()
         GloryECS::EntityID entity = reg.CreateEntity<Position>();
         Position& position = reg.GetComponent<Position>(entity);
         MyComponent& component = reg.AddComponent<MyComponent>(entity, 5);
+        ReflectableComponent& rComp = reg.AddComponent<ReflectableComponent>(entity);
+        GloryECS::EntityView* pEntityView = reg.GetEntityView(entity);
+        pEntityView->SetComponentIndex(0, 2);
+        pEntityView->SwapComponentIndex(1, 2);
     
         for (size_t x = 0; x < 100; x++)
         {
