@@ -35,7 +35,6 @@ namespace GloryReflect
 		RegisterType(enumTypeHash, pTypeData, flags);
 		m_pReflectInstance->m_pManagedTypeDatas.push_back(pTypeData);
 		if (aliasName != "") m_pReflectInstance->m_StringToTypeHash.emplace(aliasName, enumTypeHash);
-		m_pReflectInstance->m_pManagedTypeDatas.push_back(pTypeData);
 		return pTypeData;
 	}
 
@@ -217,7 +216,7 @@ namespace GloryReflect
 		if (hash <= 100) return hash;
 		if (GetEnumType(hash)) return (size_t)CustomTypeHash::Enum;
 		const TypeData* pTypeData = GetTyeData(hash);
-		if (!pTypeData || !pTypeData->IsBasicType()) return (size_t)CustomTypeHash::Struct;
+		if (pTypeData && !pTypeData->IsBasicType()) return (size_t)CustomTypeHash::Struct;
 		return hash;
 	}
 
