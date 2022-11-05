@@ -11,6 +11,7 @@ GloryECS is a basic custom Entity Component System, tailored for the Glory Game 
 - Components of the same type are next to each other in memory (just like an ECS is supposed to do)
 - Iterate over all components on an entity
 - Iterate over all components of a type
+- Component reordering
 - Link components to a UUID
 
 ### Usage
@@ -163,7 +164,7 @@ void* pComponentAddress = pTypeView->Create(entity);
 ```
 
 TypeView has other features as follows:
-``cpp
+```cpp
 // Removes the component of this type view from an entity if that entity has the component
 void Remove(EntityID entityID);
 // Returns true if the entity has the component from the type view
@@ -214,6 +215,7 @@ void OnInitialize()
 
 ### TODO
 GloryECS is currently missing the systems part of an ECS, which allows you to interact with your components. This will be added soon!
+The library allows multiple of the same components on the same entity, but there is no way to limit this nor is there a way to get a duplicate component.
 
 ## GloryReflect
 GloryReflect is a custom macro based reflection library, tailored for the Glory Game Engine, but can be used in any project.
@@ -221,18 +223,19 @@ GloryReflect is a custom macro based reflection library, tailored for the Glory 
 ### Features
 
 - Generate type and field data in your classes/structs
+- Class generation for easy enum conversion
 - Register custom templated types
 - Array support for std::vector
 - Aqcuire typedata from type name or type hash
 - Iterate over fields in a type
-- Set and Get values through reflection
+- Get and Set values through type data
 - Create instances from type data
 
 ### Generating TypeData and FieldData
 To generate `TypeData` and `FieldData` for your custom types, the REFLECTABLE macro can be used. It generates both your fields, and the nescesary data for those fields.
 The data is generated as a static getter function, but all data in this function is statis, so it is only ever created once. Which should minimize overhead.
 The first parameter in the macro is always the type of your class/struct itself. Using the parameters that follow, you may add up to 20 fields.
-The type of the field must be encapsulated with (), followed by a tab/space, and then the field name.
+A field must be formatted in the following form: (type)(name)
 
 Example:
 ```cpp
@@ -242,14 +245,14 @@ struct Transform
 	Transform(const glm::vec3& position, const glm::vec3& rotation, const glm::vec3& scale);
 
 	REFLECTABLE(Transform,
-		(glm::vec3)	Position,
-		(glm::quat)	Rotation,
-		(glm::vec3)	Scale
+		(glm::vec3) (Position),
+		(glm::quat) (Rotation),
+		(glm::vec3) (Scale)
 	)
 };
 ```
 
-Any basic type is supported, custom types like structs and classes are also supported as value, pointers are currently not supported!
+Any basic type is supported, custom types like structs and classes are also supported as value, pointers are not supported!
 
 You can also have a field to another reflectable struct/class.
 Example:
@@ -257,17 +260,40 @@ Example:
 struct Struct1
 {
 	REFLECTABLE(Struct1,
-		(float)	Float,
+		(float) (Float)
 	)
 };
 
 struct Struct2
 {
 	REFLECTABLE(Struct2,
-		(Struct1)	RecursionValue,
+		(Struct1) (RecursionValue)
 	)
 };
 ```
+
+### Generating Enum and EnumType
+The library comes with a class to easily convert enums to strings and vice verse.
+In order to generate the nescesary data for this, you must create your enums using the REFLECTABLE_ENUM macro.
+The first parameter of the macro is the enum name, followed by every possible value.
+
+Example:
+```cpp
+REFLECTABLE_ENUM(MyEnum, One, Two, Three, Four, Five)
+```
+
+After using this macro, you can use `Enum<T>` templated class to easily convert from and to a string.
+
+Example:
+```cpp
+MyEnum e = MyEnum::Three;
+std::string stringValue;
+Enum<MyEnum>().ToString(e, stringValue); // Will set stringValue = "Three"
+stringValue = "One";
+Enum<MyEnum>().FromString(stringValue, e); // Will set e = MyEnum::One
+```
+
+Both methods can return false when conversion failed, or true when succeeded.
 
 ### Registering Custom Types
 Now that you have generated your reflection data, you have to register your custom types in the `Reflect` class.
@@ -281,13 +307,39 @@ GloryReflect::Reflect::SetReflectInstance(pReflectInstance);
 GloryReflect::Reflect::DestroyReflectInstance();
 ```
 
-After creating and setting your reflection instance accross your processes, you can now use the static `GloryReflect::Reflect::RegisterType<T>()` to register yout custom types. Note that if these types where not made using the REFLECTABLE macro, then the compiler will fail to compile as the function `GetTypeData` is missing from the type.
+After creating and setting your reflection instance accross your processes, you can now use the static `GloryReflect::Reflect::RegisterType<T>()` to register yout custom types.
+Note that if these types where not made using the REFLECTABLE macro, then the compiler will fail to compile as the function `GetTypeData` is missing from the type.
 
+IMPORTANT: Make sure to register your types in the correct order so that if a type uses another registered type it can find this other type.
+
+Example:
 ```cpp
-GloryReflect::Reflect::RegisterType<Position>();
+
+struct Vector2
+{
+	REFLECTABLE(Vector2,
+		(float) (x),
+		(float) (y)
+	)
+}
+
+struct Transform
+{
+    REFLECTABLE(Transform,
+		(Vector2) (Position),
+		(Vector2) (Rotation),
+		(Vector2) (Scale)
+	)
+}
+
+// Transform has a Vector2 field so we must register Vector2 BEFORE registering Transform!
+// If we don't do this no link between the 2 will be generated
+GloryReflect::Reflect::RegisterType<Vector2>();
+GloryReflect::Reflect::RegisterType<Transform>();
 ```
 
-The `RegisterBasicType<T>()` can be used to register basic types like integer and float, but these are registered for you on instance creation.
+To register a reflectable Enum you must call `RegisterEnum<T>()`
+`RegisterBasicType<T>()` can be used to register basic types like integer and float, but these are registered for you on instance creation.
 
 ### TypeData
 The `TypeData` class contains the information of a type, this includes the following:
@@ -319,7 +371,7 @@ void* GetAddress(void* pAddress) const;
 
 ### Custom Templated Types
 It is possible to register custom templated types as a custom hash + the element hash of the template arg.
-This only works on templated types with a single template argument!
+This only works on templated types with a single template argument, and the hash must be <=100!
 `std::vector` is already registered for you, meaning you can use `std::vector` as fields in your reflectable types, std::vector itself has hash 99 by default.
 An example of its usecase would be a reference to a type of asset in your engine, when all assets use the same ID system:
 
@@ -339,14 +391,26 @@ private:
 }
 
 
-GloryReflect::Reflect::RegisterTemplatedType("AssetReference", 98/* custom type hash */, sizeof(UUID));
+GloryReflect::Reflect::RegisterTemplatedType("AssetReference", 96/* custom type hash */, sizeof(UUID));
 ```
 
-The above code would register AssetReference as type 98, any field created using this type after registration will have 98 as type hash and `std::hash<std::type_index>()(typeid(T))` as element type hash.
+The above code would register AssetReference as type 96, any field created using this type after registration will have 98 as type hash and `std::hash<std::type_index>()(typeid(T))` as element type hash.
 
 As you can see, the type has to be registered as a string, this is because the reflection system will search for this in the type name.
 
-It should be noted that the order of registration is really important here, if you were to try to use `AssetReference<T>` inside of the REFLECTABLE macro and then registering this new reflectable type before registering `AssetReference` as a templated type, an exception will trigger as the system cannot find the template type. The same is true if the template arg is not registered. This is because it needs these to find the type hash and element type hash!
+It should be noted that the order of registration is really important here, if you were to try to use `AssetReference<T>` inside of the REFLECTABLE macro and then registering this new reflectable type before registering `AssetReference` as a templated type, an exception will trigger as the system cannot find the template type.
+The same is true if the template arg is not registered. This is because it needs these to find the type hash and element type hash!
+
+These following hashes are already in use by the core library:
+```cpp
+enum class CustomTypeHash
+{
+	Struct = 97,
+	Enum = 98,
+	Array = 99,
+};
+
+```
 
 ### Type Factory
 Instances of types can be created from a `TypeData`, however this will always call the default constructor, so make sure your types have default constrcutors!
