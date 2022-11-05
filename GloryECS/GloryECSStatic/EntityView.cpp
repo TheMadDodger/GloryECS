@@ -9,7 +9,12 @@ namespace GloryECS
 
     size_t EntityView::ComponentCount()
     {
-        return m_ComponentTypes.size();
+        return m_ComponentOrder.size();
+    }
+
+    size_t EntityView::ComponentUUIDAt(size_t index)
+    {
+        return m_ComponentOrder[index];
     }
 
     std::map<Glory::UUID, size_t>::iterator EntityView::GetIterator()
@@ -22,15 +27,43 @@ namespace GloryECS
         return m_ComponentTypes.end();
     }
 
+    void EntityView::SwapComponentIndex(size_t index1, size_t index2)
+    {
+        if (index1 >= m_ComponentOrder.size() || index2 >= m_ComponentOrder.size()) return;
+        Glory::UUID comp1 = m_ComponentOrder[index1];
+        Glory::UUID comp2 = m_ComponentOrder[index2];
+        m_ComponentOrder[index1] = comp2;
+        m_ComponentOrder[index2] = comp1;
+    }
+
+    void EntityView::SetComponentIndex(size_t oldIndex, size_t newIndex)
+    {
+        if (oldIndex == newIndex) return;
+        if (oldIndex >= m_ComponentOrder.size() || newIndex >= m_ComponentOrder.size()) return;
+        Glory::UUID uuid = m_ComponentOrder[oldIndex];
+        auto eraseIter = m_ComponentOrder.begin() + oldIndex;
+        m_ComponentOrder.erase(eraseIter);
+        auto insertIter = m_ComponentOrder.begin() + newIndex;
+        m_ComponentOrder.insert(insertIter, uuid);
+    }
+
     size_t EntityView::ComponentTypeAt(size_t index)
     {
-        return m_ComponentTypes[index];
+        Glory::UUID uuid = m_ComponentOrder[index];
+        return ComponentType(uuid);
+    }
+
+    size_t EntityView::ComponentType(Glory::UUID uuid)
+    {
+        if (m_ComponentTypes.find(uuid) == m_ComponentTypes.end()) return 0;
+        return m_ComponentTypes[uuid];
     }
 
     void EntityView::Add(size_t hash, Glory::UUID uuid)
     {
         m_TypeToUUID.emplace(hash, uuid);
         m_ComponentTypes.emplace(uuid, hash);
+        m_ComponentOrder.push_back(uuid);
     }
 
     void EntityView::Remove(size_t hash)
@@ -39,6 +72,8 @@ namespace GloryECS
         Glory::UUID uuid = m_TypeToUUID[hash];
         m_TypeToUUID.erase(hash);
         m_ComponentTypes.erase(uuid);
+        auto it = std::find(m_ComponentOrder.begin(), m_ComponentOrder.end(), uuid);
+        m_ComponentOrder.erase(it);
     }
 
     void EntityView::Remove(Glory::UUID uuid)
@@ -47,5 +82,7 @@ namespace GloryECS
         size_t hash = m_ComponentTypes[uuid];
         m_ComponentTypes.erase(uuid);
         m_TypeToUUID.erase(hash);
+        auto it = std::find(m_ComponentOrder.begin(), m_ComponentOrder.end(), uuid);
+        m_ComponentOrder.erase(it);
     }
 }

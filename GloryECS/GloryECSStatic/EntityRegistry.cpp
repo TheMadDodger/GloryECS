@@ -89,9 +89,7 @@ namespace GloryECS
 	void EntityRegistry::RemoveComponentAt(EntityID entity, size_t index)
 	{
 		EntityView* pEntityView = GetEntityView(entity);
-		std::map<Glory::UUID, size_t>::iterator it = pEntityView->m_ComponentTypes.begin();
-		std::advance(it, index);
-		size_t typeHash = it->second;
+		size_t typeHash = pEntityView->ComponentTypeAt(index);
 		BaseTypeView* pTypeView = GetTypeView(typeHash);
 		pTypeView->Remove(entity);
 		m_pEntityViews[entity]->Remove(typeHash);

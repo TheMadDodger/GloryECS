@@ -13,9 +13,13 @@ namespace GloryECS
 		EntityView(EntityRegistry* pRegistry);
 
 		size_t ComponentCount();
+		size_t ComponentUUIDAt(size_t index);
 		size_t ComponentTypeAt(size_t index);
+		size_t ComponentType(Glory::UUID uuid);
 		std::map<Glory::UUID, size_t>::iterator GetIterator();
 		std::map<Glory::UUID, size_t>::iterator GetIteratorEnd();
+		void SwapComponentIndex(size_t index1, size_t index2);
+		void SetComponentIndex(size_t oldIndex, size_t newIndex);
 
 	private:
 		void Add(size_t hash, Glory::UUID uuid = Glory::UUID());
@@ -27,5 +31,6 @@ namespace GloryECS
 		EntityRegistry* m_pRegistry;
 		std::map<Glory::UUID, size_t> m_ComponentTypes;
 		std::map<size_t, Glory::UUID> m_TypeToUUID;
+		std::vector<Glory::UUID> m_ComponentOrder;
 	};
 }
