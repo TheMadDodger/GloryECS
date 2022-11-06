@@ -1,19 +1,33 @@
 #include "pch.h"
 
+void ReflectableComponent_OnAdd(GloryECS::EntityRegistry* pRegistry, GloryECS::EntityID entity, ReflectableComponent& component)
+{
+    std::cout << "ReflectableComponent added to entity " << entity << std::endl;
+}
+
+void Position_OnAdd(GloryECS::EntityRegistry* pRegistry, GloryECS::EntityID entity, Position& component)
+{
+    std::cout << "Position added to entity " << entity << std::endl;
+}
+
+void MyComponent_OnAdd(GloryECS::EntityRegistry* pRegistry, GloryECS::EntityID entity, MyComponent& component)
+{
+    std::cout << "MyComponent added to entity " << entity << std::endl;
+}
+
 int main()
 {
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 
     GloryReflect::Reflect::CreateReflectInstance();
+    GloryECS::ComponentTypes::CreateInstance();
     
     {
+        // Reflection demo
         GloryReflect::Reflect::RegisterEnum<TestEnum>();
         GloryReflect::Reflect::RegisterType<ReflectableComponent>();
 
         const GloryReflect::TypeData* pEnumTypeData = GloryReflect::Reflect::GetTyeData("enum TestEnum");
-
-
-        GloryReflect::EnumType* pEnumType = GloryReflect::Reflect::GetEnumType(std::hash<std::type_index>()(typeid(TestEnum)));
 
         TestEnum e;
         std::string out;
@@ -32,8 +46,32 @@ int main()
         a = 420;
         pFieldData->Set(&test, &a);
 
+        const GloryReflect::FieldData* pArrayFieldData = pTypeData->GetFieldData(3);
+        void* pArrayAddress = pArrayFieldData->GetAddress(&test);
+        size_t size = GloryReflect::Reflect::ArraySize(pArrayAddress, pArrayFieldData->ArrayElementType());
+        GloryReflect::Reflect::ResizeArray(pArrayAddress, pArrayFieldData->ArrayElementType(), 5);
+        size = GloryReflect::Reflect::ArraySize(pArrayAddress, pArrayFieldData->ArrayElementType());
+
+        void* pElementAddress = GloryReflect::Reflect::ElementAddress(pArrayAddress, pArrayFieldData->ArrayElementType(), 4);
+        float* value = (float*)pElementAddress;
+        *value = 5.0f;
+        GloryReflect::Reflect::ResizeArray(pArrayAddress, pArrayFieldData->ArrayElementType(), 10);
+
+
+
+
+
+        // ECS demo
+        GloryECS::ComponentTypes::RegisterComponent<ReflectableComponent>();
+
         GloryECS::EntityRegistry reg;
-        GloryECS::EntityID entity = reg.CreateEntity<Position>();
+        reg.RegisterInvokaction<ReflectableComponent>(GloryECS::InvocationType::OnAdd, ReflectableComponent_OnAdd);
+        reg.RegisterInvokaction<Position>(GloryECS::InvocationType::OnAdd, Position_OnAdd);
+        reg.RegisterInvokaction<MyComponent>(GloryECS::InvocationType::OnAdd, MyComponent_OnAdd);
+        GloryECS::EntityID entity = reg.CreateEntity();
+        reg.CreateComponent(entity, std::hash<std::type_index>()(typeid(ReflectableComponent)), Glory::UUID());
+
+        entity = reg.CreateEntity<Position>();
         Position& position = reg.GetComponent<Position>(entity);
         MyComponent& component = reg.AddComponent<MyComponent>(entity, 5);
         ReflectableComponent& rComp = reg.AddComponent<ReflectableComponent>(entity);
@@ -48,20 +86,10 @@ int main()
                 entity = reg.CreateEntity<Position>(x * 50.0f, y * 50.0f);
             }
         }
-
-        const GloryReflect::FieldData* pArrayFieldData = pTypeData->GetFieldData(3);
-        void* pArrayAddress = pArrayFieldData->GetAddress(&test);
-        size_t size = GloryReflect::Reflect::ArraySize(pArrayAddress, pArrayFieldData->ArrayElementType());
-        GloryReflect::Reflect::ResizeArray(pArrayAddress, pArrayFieldData->ArrayElementType(), 5);
-        size = GloryReflect::Reflect::ArraySize(pArrayAddress, pArrayFieldData->ArrayElementType());
-
-        void* pElementAddress = GloryReflect::Reflect::ElementAddress(pArrayAddress, pArrayFieldData->ArrayElementType(), 4);
-        float* value = (float*)pElementAddress;
-        *value = 5.0f;
-        GloryReflect::Reflect::ResizeArray(pArrayAddress, pArrayFieldData->ArrayElementType(), 10);
     }
 
     GloryReflect::Reflect::DestroyReflectInstance();
+    GloryECS::ComponentTypes::DestroyInstance();
 
     _CrtDumpMemoryLeaks();
 

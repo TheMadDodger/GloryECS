@@ -2,6 +2,7 @@
 #include "EntityID.h"
 #include "TypeView.h"
 #include "EntityView.h"
+#include "ComponentTypes.h"
 #include <map>
 #include <unordered_map>
 #include <functional>
@@ -16,12 +17,6 @@ namespace GloryECS
 
 		EntityID CreateEntity();
 		void DestroyEntity(EntityID entity);
-
-		template<typename Component>
-		void RegisterComponent()
-		{
-			GetTypeView<Component>();
-		}
 
 		template<typename Component, typename... Args>
 		EntityID CreateEntity(Args&&... args)
@@ -45,7 +40,9 @@ namespace GloryECS
 			TypeView<Component>* pTypeView = GetTypeView<Component>();
 			Component& component = pTypeView->Add(entity, std::forward<Args>(args)...);
 			EntityView* pEntityView = GetEntityView(entity);
-			pEntityView->Add(pTypeView->m_TypeHash);
+			Glory::UUID uuid;
+			pEntityView->Add(pTypeView->m_TypeHash, uuid);
+			pTypeView->m_Callbacks.Invoke(InvocationType::OnAdd, this, entity, component);
 			return component;
 		}
 
@@ -56,6 +53,7 @@ namespace GloryECS
 			Component& component = pTypeView->Add(entity, std::forward<Args>(args)...);
 			EntityView* pEntityView = GetEntityView(entity);
 			pEntityView->Add(pTypeView->m_TypeHash, uuid);
+			pTypeView->m_Callbacks.Invoke(InvocationType::OnAdd, this, entity, component);
 			return component;
 		}
 
@@ -103,6 +101,9 @@ namespace GloryECS
 			if (!pTypeView->Contains(entity))
 				throw new std::exception("Entity does not have component!");
 
+			Component& component = pTypeView->Get(entity);
+			pTypeView->m_Callbacks.Invoke(InvocationType::OnRemove, this, entity, component);
+
 			pTypeView->Remove(entity);
 			pEntityView->Remove(pTypeView->m_TypeHash);
 		}
@@ -118,6 +119,23 @@ namespace GloryECS
 		std::map<size_t, BaseTypeView*>::iterator GetTypeViewIterator();
 		std::map<size_t, BaseTypeView*>::iterator GetTypeViewIteratorEnd();
 		
+		template<typename T>
+		void RegisterInvokaction(InvocationType invocationType, std::function<void(EntityRegistry*, EntityID, T&)> callback)
+		{
+			TypeView<T>* pTypeView = GetTypeView<T>();
+			pTypeView->m_Callbacks.m_Callbacks[invocationType] = callback;
+		}
+
+		template<typename T>
+		void InvokeAll(InvocationType invocationType)
+		{
+			TypeView<T>* pTypeView = GetTypeView<T>();
+			pTypeView->InvokeAll(invocationType, this);
+		}
+
+		void InvokeAll(size_t typeHash, InvocationType invocationType);
+		void InvokeAll(InvocationType invocationType);
+
 		//void ForEach(std::function<void(EntityRegistry*, EntityID)> func);
 		//void ForEachComponent(EntityID entity, std::function<void(EntityRegistry*, EntityID, size_t, size_t)> func);
 		//
@@ -147,6 +165,8 @@ namespace GloryECS
 		//EntitySystems* GetSystems();
 
 	private:
+		friend class ComponentTypes;
+
 		// Entity data
 		std::map<EntityID, EntityView*> m_pEntityViews;
 		EntityID m_NextEntityID;

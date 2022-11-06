@@ -1,4 +1,5 @@
 #include "EntityRegistry.h"
+#include "ComponentTypes.h"
 
 namespace GloryECS
 {
@@ -37,6 +38,8 @@ namespace GloryECS
 		{
 			size_t typeHash = it->second;
 			BaseTypeView* pTypeView = GetTypeView(typeHash);
+			void* pAddress = pTypeView->GetComponentAddress(entity);
+			pTypeView->Invoke(InvocationType::OnRemove, this, entity, pAddress);
 			pTypeView->Remove(entity);
 		}
 		delete m_pEntityViews[entity];
@@ -49,13 +52,14 @@ namespace GloryECS
 		void* pAddress = pTypeView->Create(entityID);
 		EntityView* pEntityView = GetEntityView(entityID);
 		pEntityView->Add(pTypeView->m_TypeHash);
+		pTypeView->Invoke(InvocationType::OnAdd, this, entityID, pAddress);
 		return pAddress;
 	}
 
 	BaseTypeView* EntityRegistry::GetTypeView(size_t typeHash)
 	{
 		if (m_pTypeViews.find(typeHash) == m_pTypeViews.end())
-			throw new std::exception("Type does not exist");
+			return ComponentTypes::CreateTypeView(this, typeHash);
 
 		return m_pTypeViews[typeHash];
 	}
@@ -82,6 +86,8 @@ namespace GloryECS
 	{
 		EntityView* pEntityView = GetEntityView(entity);
 		BaseTypeView* pTypeView = GetTypeView(typeHash);
+		void* pAddress = pTypeView->GetComponentAddress(entity);
+		pTypeView->Invoke(InvocationType::OnRemove, this, entity, pAddress);
 		pTypeView->Remove(entity);
 		m_pEntityViews[entity]->Remove(typeHash);
 	}
@@ -91,6 +97,8 @@ namespace GloryECS
 		EntityView* pEntityView = GetEntityView(entity);
 		size_t typeHash = pEntityView->ComponentTypeAt(index);
 		BaseTypeView* pTypeView = GetTypeView(typeHash);
+		void* pAddress = pTypeView->GetComponentAddress(entity);
+		pTypeView->Invoke(InvocationType::OnRemove, this, entity, pAddress);
 		pTypeView->Remove(entity);
 		m_pEntityViews[entity]->Remove(typeHash);
 	}
@@ -108,6 +116,8 @@ namespace GloryECS
 		{
 			size_t typeHash = it->second;
 			BaseTypeView* pTypeView = GetTypeView(typeHash);
+			void* pAddress = pTypeView->GetComponentAddress(entity);
+			pTypeView->Invoke(InvocationType::OnRemove, this, entity, pAddress);
 			pTypeView->Remove(entity);
 		}
 	}
@@ -134,5 +144,19 @@ namespace GloryECS
 	std::map<size_t, BaseTypeView*>::iterator EntityRegistry::GetTypeViewIteratorEnd()
 	{
 		return m_pTypeViews.end();
+	}
+
+	void EntityRegistry::InvokeAll(size_t typeHash, InvocationType invocationType)
+	{
+		BaseTypeView* pTypeView = GetTypeView(typeHash);
+		pTypeView->InvokeAll(invocationType, this);
+	}
+
+	void EntityRegistry::InvokeAll(InvocationType invocationType)
+	{
+		for (auto it = m_pTypeViews.begin(); it != m_pTypeViews.end(); it++)
+		{
+			it->second->InvokeAll(invocationType, this);
+		}
 	}
 }

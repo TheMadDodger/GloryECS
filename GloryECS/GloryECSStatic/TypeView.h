@@ -1,5 +1,6 @@
 #pragma once
 #include "EntityID.h"
+#include "ComponentCallbacks.h"
 #include <vector>
 #include <exception>
 #include <typeindex>
@@ -23,7 +24,11 @@ namespace GloryECS
 		virtual void* Create(EntityID entityID) = 0;
 		virtual void* GetComponentAddress(EntityID entityID, size_t number = 0) = 0;
 
+		virtual void Invoke(const InvocationType& callbackType, EntityRegistry* pRegistry, EntityID entity, void* pComponentAddress) = 0;
+		virtual void InvokeAll(const InvocationType& callbackType, EntityRegistry* pRegistry) = 0;
+
 	protected:
+		virtual BaseTypeView* Create(EntityRegistry* pRegistry) = 0;
 		virtual void OnRemove(size_t index) = 0;
 
 	protected:
@@ -33,13 +38,14 @@ namespace GloryECS
 
 	private:
 		friend class EntityRegistry;
+		friend class ComponentTypes;
 	};
 
 	template<typename T>
 	class TypeView : public BaseTypeView
 	{
 	public:
-		TypeView(EntityRegistry* pRegistry) : BaseTypeView(std::hash<std::type_index>()(typeid(T)), pRegistry) {}
+		TypeView(EntityRegistry* pRegistry) : m_Callbacks(), BaseTypeView(std::hash<std::type_index>()(typeid(T)), pRegistry) {}
 		virtual ~TypeView()
 		{
 			m_ComponentData.clear();
@@ -97,7 +103,31 @@ namespace GloryECS
 			return &m_ComponentData[index];
 		}
 
+		void Invoke(const InvocationType& callbackType, EntityRegistry* pRegistry, EntityID entity, void* pComponentAddress) override
+		{
+			T* pComponent = (T*)pComponentAddress;
+			m_Callbacks.Invoke(callbackType, pRegistry, entity, *pComponent);
+		}
+
+		void InvokeAll(const InvocationType& invocationType, EntityRegistry* pRegistry) override
+		{
+			for (size_t i = 0; i < m_ComponentData.size(); i++)
+			{
+				T& component = m_ComponentData[i];
+				EntityID entity = m_Entities[i];
+				m_Callbacks.Invoke(invocationType, pRegistry, entity, component);
+			}
+		}
+
 	private:
+		virtual BaseTypeView* Create(EntityRegistry* pRegistry) override
+		{
+			return new TypeView<T>(pRegistry);
+		}
+
+	private:
+		friend class EntityRegistry;
 		std::vector<T> m_ComponentData;
+		ComponentInvokations<T> m_Callbacks;
 	};
 }
