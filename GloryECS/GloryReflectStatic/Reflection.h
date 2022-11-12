@@ -59,6 +59,7 @@ namespace GloryReflect
 
 		static std::any CreateAsValue(size_t hash);
 		static void* CreateAsPointer(size_t hash);
+		static void CreateAsTemporary(size_t hash, std::function<void(void*)> callback);
 
 		static Reflect* CreateReflectInstance();
 		static void DestroyReflectInstance();

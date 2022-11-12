@@ -151,6 +151,15 @@ namespace GloryReflect
 		return pFactory->CreateAsPointer();
 	}
 
+	void Reflect::CreateAsTemporary(size_t hash, std::function<void(void*)> callback)
+	{
+		if (m_pReflectInstance->m_pFactories.find(hash) == m_pReflectInstance->m_pFactories.end())
+			throw new std::exception("Type not found");
+
+		const FactoryBase* pFactory = m_pReflectInstance->m_pFactories[hash];
+		pFactory->CreateAsTemporary(callback);
+	}
+
 	Reflect* Reflect::CreateReflectInstance()
 	{
 		m_InstanceOwned = true;
