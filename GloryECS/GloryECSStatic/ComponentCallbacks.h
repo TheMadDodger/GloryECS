@@ -11,6 +11,7 @@ namespace GloryECS
 	{
 		OnAdd,
 		OnRemove,
+		OnValidate,
 		Start,
 		Stop,
 		Update,
