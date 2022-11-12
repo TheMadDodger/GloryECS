@@ -2,6 +2,7 @@
 #include <any>
 #include <string>
 #include <typeindex>
+#include <functional>
 
 namespace GloryReflect
 {
@@ -13,6 +14,7 @@ namespace GloryReflect
 
 		virtual std::any CreateAsValue() const = 0;
 		virtual void* CreateAsPointer() const = 0;
+		virtual void CreateAsTemporary(std::function<void(void*)> callback) const = 0;
 
 	private:
 		friend class Reflect;
@@ -34,6 +36,12 @@ namespace GloryReflect
 		virtual void* CreateAsPointer() const override
 		{
 			return new T();
+		}
+
+		virtual void CreateAsTemporary(std::function<void(void*)> callback) const
+		{
+			T value = T();
+			callback(&value);
 		}
 	};
 }
