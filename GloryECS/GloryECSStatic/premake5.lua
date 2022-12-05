@@ -19,7 +19,7 @@ project "GloryECSStatic"
 
 	includedirs
 	{
-		"../../../%{GloryIncludeDir.core}",
+		"%{GloryIncludeDir.core}",
 	}
 
 	defines
