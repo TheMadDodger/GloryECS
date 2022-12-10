@@ -229,6 +229,22 @@ namespace GloryReflect
 		return hash;
 	}
 
+	const FieldData* Reflect::GetArrayElementData(const FieldData* pFieldData, size_t index)
+	{
+		if (m_pReflectInstance->m_ArrayElementFieldDatas.find(pFieldData->ArrayElementType()) == m_pReflectInstance->m_ArrayElementFieldDatas.end())
+			m_pReflectInstance->m_ArrayElementFieldDatas.emplace(pFieldData->ArrayElementType(), std::map<size_t, const FieldData>());
+
+		if (m_pReflectInstance->m_ArrayElementFieldDatas.at(pFieldData->ArrayElementType()).find(index)
+			== m_pReflectInstance->m_ArrayElementFieldDatas.at(pFieldData->ArrayElementType()).end())
+		{
+			const TypeData* pTypeData = GloryReflect::Reflect::GetTyeData(pFieldData->ArrayElementType());
+			m_pReflectInstance->m_ArrayElementFieldDatas.at(pFieldData->ArrayElementType())
+				.emplace(index, FieldData(pFieldData->ArrayElementType(), "Element", pTypeData->TypeName(), index * pFieldData->Size(), pFieldData->Size()));
+		}
+
+		return &m_pReflectInstance->m_ArrayElementFieldDatas.at(pFieldData->ArrayElementType()).at(index);
+	}
+
 	Reflect::Reflect()
 	{
 	}
@@ -268,5 +284,6 @@ namespace GloryReflect
 		m_pFactories.clear();
 		m_pArrayTypes.clear();
 		m_pEnumTypes.clear();
+		m_ArrayElementFieldDatas.clear();
 	}
 }

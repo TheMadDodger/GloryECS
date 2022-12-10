@@ -24,6 +24,8 @@ namespace GloryReflect
 
 		void* GetAddress(void* pAddress) const;
 
+		const FieldData* GetArrayElementFieldData(size_t index) const;
+
 	private:
 		FieldType m_Type;
 		ElementType m_ElementType;

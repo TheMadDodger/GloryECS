@@ -73,6 +73,8 @@ namespace GloryReflect
 
 		static size_t GetCustomTypeHash(size_t hash);
 
+		static const FieldData* GetArrayElementData(const FieldData* pFieldData, size_t index);
+
 	private:
 		Reflect();
 		virtual ~Reflect();
@@ -99,6 +101,7 @@ namespace GloryReflect
 		std::map<size_t, const FactoryBase*> m_pFactories;
 		std::map<size_t, const ArrayTypeBase*> m_pArrayTypes;
 		std::map<size_t, EnumType*> m_pEnumTypes;
+		std::map<size_t, std::map<size_t, const FieldData>> m_ArrayElementFieldDatas;
 
 		static Reflect* m_pReflectInstance;
 		static bool m_InstanceOwned;
