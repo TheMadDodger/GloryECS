@@ -51,7 +51,7 @@ namespace GloryECS
 		BaseTypeView* pTypeView = GetTypeView(typeHash);
 		void* pAddress = pTypeView->Create(entityID);
 		EntityView* pEntityView = GetEntityView(entityID);
-		pEntityView->Add(pTypeView->m_TypeHash);
+		pEntityView->Add(pTypeView->m_TypeHash, uuid);
 		pTypeView->Invoke(InvocationType::OnAdd, this, entityID, pAddress);
 		return pAddress;
 	}
