@@ -38,6 +38,12 @@ namespace GloryECS
 		Component& AddComponent(EntityID entity, Args&&... args)
 		{
 			TypeView<Component>* pTypeView = GetTypeView<Component>();
+			const ComponentType* componentType = ComponentTypes::GetComponentType(pTypeView->m_TypeHash);
+			if (!componentType->m_AllowMultiple && pTypeView->Contains(entity))
+			{
+				throw new std::exception(("Duplicate component of type " + componentType->m_Name + " not allowed!").c_str());
+			}
+
 			Component& component = pTypeView->Add(entity, std::forward<Args>(args)...);
 			EntityView* pEntityView = GetEntityView(entity);
 			Glory::UUID uuid;
@@ -50,6 +56,11 @@ namespace GloryECS
 		Component& AddComponent(EntityID entity, Glory::UUID uuid, Args&&... args)
 		{
 			TypeView<Component>* pTypeView = GetTypeView<Component>();
+			const ComponentType* componentType = ComponentTypes::GetComponentType(pTypeView->m_TypeHash);
+			if (!componentType->m_AllowMultiple && pTypeView->Contains(entity))
+			{
+				throw new std::exception(("Duplicate component of type " + componentType->m_Name + " not allowed!").c_str());
+			}
 			Component& component = pTypeView->Add(entity, std::forward<Args>(args)...);
 			EntityView* pEntityView = GetEntityView(entity);
 			pEntityView->Add(pTypeView->m_TypeHash, uuid);
@@ -81,6 +92,8 @@ namespace GloryECS
 			TypeView<Component>* pTypeView = GetTypeView<Component>();
 			return pTypeView->Contains(entity);
 		}
+
+		bool HasComponent(EntityID entity, size_t type);
 
 		template<typename Component>
 		Component& GetComponent(EntityID entity)

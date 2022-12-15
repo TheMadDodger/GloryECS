@@ -49,6 +49,12 @@ namespace GloryECS
 	void* EntityRegistry::CreateComponent(EntityID entityID, size_t typeHash, Glory::UUID uuid)
 	{
 		BaseTypeView* pTypeView = GetTypeView(typeHash);
+		const ComponentType* componentType = ComponentTypes::GetComponentType(pTypeView->m_TypeHash);
+		if (!componentType->m_AllowMultiple && pTypeView->Contains(entityID))
+		{
+			throw new std::exception(("Duplicate component of type " + componentType->m_Name + " not allowed!").c_str());
+		}
+
 		void* pAddress = pTypeView->Create(entityID);
 		EntityView* pEntityView = GetEntityView(entityID);
 		pEntityView->Add(pTypeView->m_TypeHash, uuid);
@@ -80,6 +86,12 @@ namespace GloryECS
 
 		// TODO: Get number of the component in case of duplicates
 		return pTypeView->GetComponentAddress(entityID);
+	}
+
+	bool EntityRegistry::HasComponent(EntityID entity, size_t type)
+	{
+		BaseTypeView* pTypeView = GetTypeView(type);
+		return pTypeView->Contains(entity);
 	}
 
 	void EntityRegistry::RemoveComponent(EntityID entity, size_t typeHash)
