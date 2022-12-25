@@ -46,4 +46,17 @@ const std::string GloryReflect::Enum<enumName>::m_EnumStringValues[] = {					\
 const size_t GloryReflect::Enum<enumName>::m_NumValues = NARGS(__VA_ARGS__);				\
 bool GloryReflect::Enum<enumName>::Valid() { return true; }									\
 
+#define REFLECTABLE_ENUM_NS(nameSpace, enumName, ...) namespace nameSpace {					\
+enum class enumName																			\
+{																							\
+	FOR_EACH(REFLECT_ENUM_VALUE, __VA_ARGS__)												\
+};																							\
+}																							\
+																							\
+const std::string GloryReflect::Enum<nameSpace::enumName>::m_EnumStringValues[] = {					\
+	FOR_EACH(REFLECT_ENUM_STRING_VALUE, __VA_ARGS__)										\
+};																							\
+const size_t GloryReflect::Enum<nameSpace::enumName>::m_NumValues = NARGS(__VA_ARGS__);				\
+bool GloryReflect::Enum<nameSpace::enumName>::Valid() { return true; }									\
+
 #pragma endregion
