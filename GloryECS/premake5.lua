@@ -7,7 +7,7 @@ workspace "GloryECS"
 	startproject "Demo"
 	startproject "GloryECSStatic"
 	startproject "GloryReflectStatic"
-	
+
 	configurations
 	{
 		"Debug",
