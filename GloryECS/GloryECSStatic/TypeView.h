@@ -73,7 +73,7 @@ namespace GloryECS
 			size_t index = it - m_Entities.begin();
 			return m_ComponentData[index];
 		}
-		
+
 		virtual const std::type_index ComponentType() const override
 		{
 			return typeid(T);

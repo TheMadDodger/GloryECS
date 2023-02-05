@@ -25,7 +25,7 @@ namespace GloryReflect
 	class Factory : public FactoryBase
 	{
 	public:
-		Factory() : FactoryBase(std::hash<std::type_index>()(typeid(T))) {}
+		Factory() : FactoryBase(std::hash<std::string_view>()(typeid(T).name())) {}
 		virtual ~Factory() {}
 
 		virtual std::any CreateAsValue() const override

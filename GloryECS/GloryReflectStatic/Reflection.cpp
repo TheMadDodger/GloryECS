@@ -16,7 +16,7 @@ namespace GloryReflect
 
 	const TypeData* Reflect::RegisterBasicType(const std::type_info& type, size_t size, const std::string& aliasName, uint64_t flags)
 	{
-		const size_t typeHash = std::hash<std::type_index>()(type);
+		const size_t typeHash = std::hash<std::string_view>()(type.name());
 		if (m_pReflectInstance->m_pTypeDatas.find(typeHash) != m_pReflectInstance->m_pTypeDatas.end()) return m_pReflectInstance->m_pTypeDatas[typeHash];
 
 		const char* typeNameString = type.name();
@@ -255,12 +255,12 @@ namespace GloryReflect
 		{
 			delete it->second;
 		}
-		
+
 		for (auto it = m_pArrayTypes.begin(); it != m_pArrayTypes.end(); it++)
 		{
 			delete it->second;
 		}
-		
+
 		for (auto it = m_pEnumTypes.begin(); it != m_pEnumTypes.end(); it++)
 		{
 			delete it->second;
