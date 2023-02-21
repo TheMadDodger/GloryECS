@@ -82,6 +82,7 @@ namespace GloryReflect
 		}
 
 		static size_t Hash(const std::type_info& type);
+		static size_t Hash(const char* str);
 
 	private:
 		Reflect();

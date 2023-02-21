@@ -251,6 +251,11 @@ namespace GloryReflect
 		return Hashing::Hash(type.name());
 	}
 
+	size_t Reflect::Hash(const char* str)
+	{
+		return Hashing::Hash(str);
+	}
+
 	Reflect::Reflect()
 	{
 	}
