@@ -22,8 +22,8 @@ namespace GloryECS
 		void SetComponentIndex(size_t oldIndex, size_t newIndex);
 
 	private:
-		void Add(size_t hash, Glory::UUID uuid = Glory::UUID());
-		void Remove(size_t hash);
+		void Add(uint32_t hash, Glory::UUID uuid = Glory::UUID());
+		void Remove(uint32_t hash);
 		void Remove(Glory::UUID uuid);
 
 	private:

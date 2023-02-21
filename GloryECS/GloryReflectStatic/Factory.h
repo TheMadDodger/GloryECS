@@ -9,7 +9,7 @@ namespace GloryReflect
 	class FactoryBase
 	{
 	public:
-		FactoryBase(size_t typeHash);
+		FactoryBase(uint32_t typeHash);
 		virtual ~FactoryBase();
 
 		virtual std::any CreateAsValue() const = 0;

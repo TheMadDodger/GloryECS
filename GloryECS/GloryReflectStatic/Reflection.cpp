@@ -7,7 +7,7 @@ namespace GloryReflect
 	bool Reflect::m_InstanceOwned = false;
 	const char* Reflect::BASIC_VALUE_NAME = "m_value";
 
-	void Reflect::RegisterType(size_t hash, const TypeData* pTypeData, uint64_t flags)
+	void Reflect::RegisterType(uint32_t hash, const TypeData* pTypeData, uint64_t flags)
 	{
 		if (m_pReflectInstance->m_pTypeDatas.find(hash) != m_pReflectInstance->m_pTypeDatas.end()) return;
 		m_pReflectInstance->m_pTypeDatas.emplace(hash, pTypeData);
@@ -17,7 +17,7 @@ namespace GloryReflect
 
 	const TypeData* Reflect::RegisterBasicType(const std::type_info& type, size_t size, const std::string& aliasName, uint64_t flags)
 	{
-		const size_t typeHash = Hash(type);
+		const uint32_t typeHash = Hash(type);
 		if (m_pReflectInstance->m_pTypeDatas.find(typeHash) != m_pReflectInstance->m_pTypeDatas.end()) return m_pReflectInstance->m_pTypeDatas[typeHash];
 
 		const char* typeNameString = type.name();
@@ -52,7 +52,7 @@ namespace GloryReflect
 		if (str.length() > 0 && tokens.size() <= 0) tokens.push_back(str);
 	}
 
-	const TypeData* Reflect::RegisterTemplatedType(const char* typeName, size_t typeHash, size_t size)
+	const TypeData* Reflect::RegisterTemplatedType(const char* typeName, uint32_t typeHash, size_t size)
 	{
 		if (m_pReflectInstance->m_pTypeDatas.find(typeHash) != m_pReflectInstance->m_pTypeDatas.end()) return m_pReflectInstance->m_pTypeDatas[typeHash];
 		std::string tempTypeName = typeName;
@@ -61,7 +61,7 @@ namespace GloryReflect
 		Tokenize(typeName, tokens);
 
 		const char* typeNameString = tokens[0].c_str();
-		const size_t TYPE_HASH = typeHash;
+		const uint32_t TYPE_HASH = typeHash;
 		const int NUM_ARGS = 0;
 		const FieldData pFields[] =
 		{
@@ -87,7 +87,7 @@ namespace GloryReflect
 		return m_pReflectInstance->m_pTypeDatas.size();
 	}
 
-	const TypeData* Reflect::GetTyeData(size_t hash)
+	const TypeData* Reflect::GetTyeData(uint32_t hash)
 	{
 		if (m_pReflectInstance->m_pTypeDatas.find(hash) == m_pReflectInstance->m_pTypeDatas.end()) return nullptr;
 		return m_pReflectInstance->m_pTypeDatas[hash];
@@ -96,7 +96,7 @@ namespace GloryReflect
 	const TypeData* Reflect::GetTyeData(const std::string& name)
 	{
 		if (m_pReflectInstance->m_StringToTypeHash.find(name) == m_pReflectInstance->m_StringToTypeHash.end()) return nullptr;
-		size_t typeHash = m_pReflectInstance->m_StringToTypeHash[name];
+		uint32_t typeHash = m_pReflectInstance->m_StringToTypeHash[name];
 		return GetTyeData(typeHash);
 	}
 
@@ -107,7 +107,7 @@ namespace GloryReflect
 		return it->second;
 	}
 
-	const uint64_t Reflect::GetTypeFlags(size_t hash)
+	const uint64_t Reflect::GetTypeFlags(uint32_t hash)
 	{
 		if (m_pReflectInstance->m_DataTypeFlags.find(hash) == m_pReflectInstance->m_DataTypeFlags.end()) return 0;
 		return m_pReflectInstance->m_DataTypeFlags[hash];
@@ -134,7 +134,7 @@ namespace GloryReflect
 		return m_pReflectInstance->m_pTypeDatas.end();
 	}
 
-	std::any Reflect::CreateAsValue(size_t hash)
+	std::any Reflect::CreateAsValue(uint32_t hash)
 	{
 		if (m_pReflectInstance->m_pFactories.find(hash) == m_pReflectInstance->m_pFactories.end())
 			throw new std::exception("Type not found");
@@ -143,7 +143,7 @@ namespace GloryReflect
 		return pFactory->CreateAsValue();
 	}
 
-	void* Reflect::CreateAsPointer(size_t hash)
+	void* Reflect::CreateAsPointer(uint32_t hash)
 	{
 		if (m_pReflectInstance->m_pFactories.find(hash) == m_pReflectInstance->m_pFactories.end())
 			throw new std::exception("Type not found");
@@ -152,7 +152,7 @@ namespace GloryReflect
 		return pFactory->CreateAsPointer();
 	}
 
-	void Reflect::CreateAsTemporary(size_t hash, std::function<void(void*)> callback)
+	void Reflect::CreateAsTemporary(uint32_t hash, std::function<void(void*)> callback)
 	{
 		if (m_pReflectInstance->m_pFactories.find(hash) == m_pReflectInstance->m_pFactories.end())
 			throw new std::exception("Type not found");
@@ -215,13 +215,13 @@ namespace GloryReflect
 		return m_pReflectInstance->m_pArrayTypes[elementTypeHash]->ElementAddress(pArrayAddress, index);
 	}
 
-	EnumType* Reflect::GetEnumType(size_t hash)
+	EnumType* Reflect::GetEnumType(uint32_t hash)
 	{
 		if (m_pReflectInstance->m_pEnumTypes.find(hash) == m_pReflectInstance->m_pEnumTypes.end()) return nullptr;
 		return m_pReflectInstance->m_pEnumTypes[hash];
 	}
 
-	size_t Reflect::GetCustomTypeHash(size_t hash)
+	size_t Reflect::GetCustomTypeHash(uint32_t hash)
 	{
 		if (hash <= 100) return hash;
 		if (GetEnumType(hash)) return (size_t)CustomTypeHash::Enum;

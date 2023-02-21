@@ -14,7 +14,7 @@ namespace GloryECS
 	class BaseTypeView
 	{
 	public:
-		BaseTypeView(size_t typeHash, EntityRegistry* pRegistry);
+		BaseTypeView(uint32_t typeHash, EntityRegistry* pRegistry);
 		virtual ~BaseTypeView();
 
 		void Remove(EntityID entityID);

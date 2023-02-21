@@ -3,7 +3,7 @@
 
 namespace GloryReflect
 {
-	TypeData::TypeData(const char* typeName, const FieldData* pFields, size_t typeHash, int numFields, bool isBasicType) :
+	TypeData::TypeData(const char* typeName, const FieldData* pFields, uint32_t typeHash, int numFields, bool isBasicType) :
 		m_TypeName(typeName),
 		m_pFields(pFields),
 		m_TypeHash(typeHash),
@@ -30,7 +30,7 @@ namespace GloryReflect
 		return m_TypeName;
 	}
 
-	const size_t TypeData::TypeHash() const
+	const uint32_t TypeData::TypeHash() const
 	{
 		return m_TypeHash;
 	}

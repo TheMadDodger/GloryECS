@@ -2,7 +2,7 @@
 
 namespace GloryReflect
 {
-	FactoryBase::FactoryBase(size_t typeHash) : m_TypeHash(typeHash)
+	FactoryBase::FactoryBase(uint32_t typeHash) : m_TypeHash(typeHash)
 	{
 	}
 	FactoryBase::~FactoryBase()

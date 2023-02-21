@@ -68,12 +68,12 @@ namespace GloryECS
 			return component;
 		}
 
-		void* CreateComponent(EntityID entityID, size_t typeHash, Glory::UUID uuid);
+		void* CreateComponent(EntityID entityID, uint32_t typeHash, Glory::UUID uuid);
 
 		template<typename Component>
 		TypeView<Component>* GetTypeView()
 		{
-			size_t hash = Hashing::Hash(typeid(Component).name());
+			uint32_t hash = Hashing::Hash(typeid(Component).name());
 			if (m_pTypeViews.find(hash) == m_pTypeViews.end())
 				m_pTypeViews[hash] = new TypeView<Component>(this);
 
@@ -81,7 +81,7 @@ namespace GloryECS
 			return pTypeView;
 		}
 
-		BaseTypeView* GetTypeView(size_t typeHash);
+		BaseTypeView* GetTypeView(uint32_t typeHash);
 		EntityView* GetEntityView(EntityID entity);
 
 		void* GetComponentAddress(EntityID entityID, Glory::UUID componentID);
@@ -93,7 +93,7 @@ namespace GloryECS
 			return pTypeView->Contains(entity);
 		}
 
-		bool HasComponent(EntityID entity, size_t type);
+		bool HasComponent(EntityID entity, uint32_t type);
 
 		template<typename Component>
 		Component& GetComponent(EntityID entity)
@@ -121,7 +121,7 @@ namespace GloryECS
 			pEntityView->Remove(pTypeView->m_TypeHash);
 		}
 
-		void RemoveComponent(EntityID entity, size_t typeHash);
+		void RemoveComponent(EntityID entity, uint32_t typeHash);
 		void RemoveComponentAt(EntityID entity, size_t index);
 		//void ChangeComponentIndex(EntityID entity, size_t index, size_t newIndex);
 		size_t ComponentCount(EntityID entity);
@@ -146,7 +146,7 @@ namespace GloryECS
 			pTypeView->InvokeAll(invocationType, this);
 		}
 
-		void InvokeAll(size_t typeHash, InvocationType invocationType);
+		void InvokeAll(uint32_t typeHash, InvocationType invocationType);
 		void InvokeAll(InvocationType invocationType);
 
 		//void ForEach(std::function<void(EntityRegistry*, EntityID)> func);

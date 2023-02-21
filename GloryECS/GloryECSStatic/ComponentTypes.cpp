@@ -31,7 +31,7 @@ namespace GloryECS
 		return m_pInstance->m_NameToHash[name];
 	}
 
-	const ComponentType* ComponentTypes::GetComponentType(const size_t hash)
+	const ComponentType* ComponentTypes::GetComponentType(const uint32_t hash)
 	{
 		if (m_pInstance->m_ComponentTypes.find(hash) == m_pInstance->m_ComponentTypes.end()) return nullptr;
 		return &m_pInstance->m_ComponentTypes.at(hash);
@@ -45,11 +45,11 @@ namespace GloryECS
 	const ComponentType* ComponentTypes::GetComponentTypeAt(const size_t index)
 	{
 		if (index >= m_pInstance->m_TypeHashes.size()) return nullptr;
-		const size_t hash = m_pInstance->m_TypeHashes[index];
+		const uint32_t hash = m_pInstance->m_TypeHashes[index];
 		return &m_pInstance->m_ComponentTypes[hash];
 	}
 
-	void ComponentTypes::AddTypeView(std::string& name, size_t hash, BaseTypeView* pTypeView)
+	void ComponentTypes::AddTypeView(std::string& name, uint32_t hash, BaseTypeView* pTypeView)
 	{
 		if (m_pInstance->m_pTypeViewTemplates.find(hash) != m_pInstance->m_pTypeViewTemplates.end())
 			throw new std::exception("Component already registered!");
@@ -59,12 +59,12 @@ namespace GloryECS
 		m_pInstance->m_NameToHash[name] = hash;
 	}
 
-	void ComponentTypes::AddComponentType(std::string& name, size_t hash, bool allowMultiple, uint64_t customFlags)
+	void ComponentTypes::AddComponentType(std::string& name, uint32_t hash, bool allowMultiple, uint64_t customFlags)
 	{
 		m_pInstance->m_ComponentTypes.emplace(hash, ComponentType{ name, hash, allowMultiple, customFlags });
 	}
 
-	BaseTypeView* ComponentTypes::CreateTypeView(EntityRegistry* pRegistry, size_t hash)
+	BaseTypeView* ComponentTypes::CreateTypeView(EntityRegistry* pRegistry, uint32_t hash)
 	{
 		if (m_pInstance->m_pTypeViewTemplates.find(hash) == m_pInstance->m_pTypeViewTemplates.end())
 			throw new std::exception("Component not registered!");

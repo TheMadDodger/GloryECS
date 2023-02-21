@@ -20,7 +20,7 @@ public:\
 	static const GloryReflect::TypeData* GetTypeData()\
 	{\
 		static const char* typeNameString = STRINGIZE(typeName);\
-		static const size_t TYPE_HASH = GloryReflect::Reflect::Hash<typeName>();\
+		static const uint32_t TYPE_HASH = GloryReflect::Reflect::Hash<typeName>();\
 		static const int NUM_ARGS = NARGS(__VA_ARGS__);\
 		static const GloryReflect::FieldData pFields[] = {\
 			FOR_EACH(REFLECT_FIELD_INFO, __VA_ARGS__)\

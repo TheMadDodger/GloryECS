@@ -40,7 +40,7 @@ namespace GloryECS
 		EntityView* pEntityView = GetEntityView(entity);
 		for (auto it = pEntityView->m_ComponentTypes.begin(); it != pEntityView->m_ComponentTypes.end(); it++)
 		{
-			size_t typeHash = it->second;
+			uint32_t typeHash = it->second;
 			BaseTypeView* pTypeView = GetTypeView(typeHash);
 			void* pAddress = pTypeView->GetComponentAddress(entity);
 			pTypeView->Invoke(InvocationType::OnRemove, this, entity, pAddress);
@@ -50,7 +50,7 @@ namespace GloryECS
 		m_pEntityViews.erase(entity);
 	}
 
-	void* EntityRegistry::CreateComponent(EntityID entityID, size_t typeHash, Glory::UUID uuid)
+	void* EntityRegistry::CreateComponent(EntityID entityID, uint32_t typeHash, Glory::UUID uuid)
 	{
 		BaseTypeView* pTypeView = GetTypeView(typeHash);
 		const ComponentType* componentType = ComponentTypes::GetComponentType(pTypeView->m_TypeHash);
@@ -66,7 +66,7 @@ namespace GloryECS
 		return pAddress;
 	}
 
-	BaseTypeView* EntityRegistry::GetTypeView(size_t typeHash)
+	BaseTypeView* EntityRegistry::GetTypeView(uint32_t typeHash)
 	{
 		if (m_pTypeViews.find(typeHash) == m_pTypeViews.end())
 			return ComponentTypes::CreateTypeView(this, typeHash);
@@ -85,20 +85,20 @@ namespace GloryECS
 	void* EntityRegistry::GetComponentAddress(EntityID entityID, Glory::UUID componentID)
 	{
 		EntityView* pEntityView = GetEntityView(entityID);
-		size_t hash = pEntityView->m_ComponentTypes.at(componentID);
+		uint32_t hash = pEntityView->m_ComponentTypes.at(componentID);
 		BaseTypeView* pTypeView = GetTypeView(hash);
 
 		// TODO: Get number of the component in case of duplicates
 		return pTypeView->GetComponentAddress(entityID);
 	}
 
-	bool EntityRegistry::HasComponent(EntityID entity, size_t type)
+	bool EntityRegistry::HasComponent(EntityID entity, uint32_t type)
 	{
 		BaseTypeView* pTypeView = GetTypeView(type);
 		return pTypeView->Contains(entity);
 	}
 
-	void EntityRegistry::RemoveComponent(EntityID entity, size_t typeHash)
+	void EntityRegistry::RemoveComponent(EntityID entity, uint32_t typeHash)
 	{
 		EntityView* pEntityView = GetEntityView(entity);
 		BaseTypeView* pTypeView = GetTypeView(typeHash);
@@ -111,7 +111,7 @@ namespace GloryECS
 	void EntityRegistry::RemoveComponentAt(EntityID entity, size_t index)
 	{
 		EntityView* pEntityView = GetEntityView(entity);
-		size_t typeHash = pEntityView->ComponentTypeAt(index);
+		uint32_t typeHash = pEntityView->ComponentTypeAt(index);
 		BaseTypeView* pTypeView = GetTypeView(typeHash);
 		void* pAddress = pTypeView->GetComponentAddress(entity);
 		pTypeView->Invoke(InvocationType::OnRemove, this, entity, pAddress);
@@ -130,7 +130,7 @@ namespace GloryECS
 		EntityView* pEntityView = GetEntityView(entity);
 		for (auto it = pEntityView->m_ComponentTypes.begin(); it != pEntityView->m_ComponentTypes.end(); it++)
 		{
-			size_t typeHash = it->second;
+			uint32_t typeHash = it->second;
 			BaseTypeView* pTypeView = GetTypeView(typeHash);
 			void* pAddress = pTypeView->GetComponentAddress(entity);
 			pTypeView->Invoke(InvocationType::OnRemove, this, entity, pAddress);
@@ -162,7 +162,7 @@ namespace GloryECS
 		return m_pTypeViews.end();
 	}
 
-	void EntityRegistry::InvokeAll(size_t typeHash, InvocationType invocationType)
+	void EntityRegistry::InvokeAll(uint32_t typeHash, InvocationType invocationType)
 	{
 		BaseTypeView* pTypeView = GetTypeView(typeHash);
 		pTypeView->InvokeAll(invocationType, this);

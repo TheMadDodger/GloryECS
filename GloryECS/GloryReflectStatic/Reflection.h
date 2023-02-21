@@ -39,27 +39,27 @@ namespace GloryReflect
 			if (!pNewEnum->Valid())
 				throw new std::exception("Enum is not a reflectable type!");
 
-			const size_t typeHash = Reflect::Hash<T>();
+			const uint32_t typeHash = Reflect::Hash<T>();
 			m_pReflectInstance->m_pEnumTypes.emplace(typeHash, pNewEnum);
 
 			return RegisterEnumType(typeid(T).name(), typeHash, aliasName, flags);
 		}
 
-		static const TypeData* RegisterTemplatedType(const char* typeName, size_t typeHash, size_t size);
+		static const TypeData* RegisterTemplatedType(const char* typeName, uint32_t typeHash, size_t size);
 
 		static size_t TypeCount();
-		static const TypeData* GetTyeData(size_t hash);
+		static const TypeData* GetTyeData(uint32_t hash);
 		static const TypeData* GetTyeData(const std::string& name);
 		static const TypeData* GetTyeDataAt(size_t index);
-		static const uint64_t GetTypeFlags(size_t hash);
+		static const uint64_t GetTypeFlags(uint32_t hash);
 		static void SetFieldFlags(const FieldData* pFieldData, uint64_t flags = 0);
 		static uint64_t GetFieldFlags(const FieldData* pFieldData);
 		static std::map<size_t, const TypeData*>::iterator GetTypeIterator();
 		static std::map<size_t, const TypeData*>::iterator GetTypeIteratorEnd();
 
-		static std::any CreateAsValue(size_t hash);
-		static void* CreateAsPointer(size_t hash);
-		static void CreateAsTemporary(size_t hash, std::function<void(void*)> callback);
+		static std::any CreateAsValue(uint32_t hash);
+		static void* CreateAsPointer(uint32_t hash);
+		static void CreateAsTemporary(uint32_t hash, std::function<void(void*)> callback);
 
 		static Reflect* CreateReflectInstance();
 		static void DestroyReflectInstance();
@@ -69,26 +69,26 @@ namespace GloryReflect
 		static const size_t ArraySize(void* pArrayAddress, size_t elementTypeHash);
 		static void* ElementAddress(void* pArrayAddress, size_t elementTypeHash, size_t index);
 
-		static EnumType* GetEnumType(size_t hash);
+		static EnumType* GetEnumType(uint32_t hash);
 
-		static size_t GetCustomTypeHash(size_t hash);
+		static size_t GetCustomTypeHash(uint32_t hash);
 
 		static const FieldData* GetArrayElementData(const FieldData* pFieldData, size_t index);
 
 		template<typename T>
-		static size_t Hash()
+		static uint32_t Hash()
 		{
 			return Hash(typeid(T));
 		}
 
-		static size_t Hash(const std::type_info& type);
-		static size_t Hash(const char* str);
+		static uint32_t Hash(const std::type_info& type);
+		static uint32_t Hash(const char* str);
 
 	private:
 		Reflect();
 		virtual ~Reflect();
 
-		static void RegisterType(size_t hash, const TypeData* pTypeData, uint64_t flags = 0);
+		static void RegisterType(uint32_t hash, const TypeData* pTypeData, uint64_t flags = 0);
 		static const TypeData* RegisterBasicType(const std::type_info& type, size_t size, const std::string& aliasName, uint64_t flags);
 		static const TypeData* RegisterEnumType(const char* typeName, size_t enumTypeHash, const std::string& aliasName, uint64_t flags);
 

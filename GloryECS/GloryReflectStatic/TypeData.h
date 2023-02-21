@@ -6,12 +6,12 @@ namespace GloryReflect
 	struct TypeData
 	{
 	public:
-		TypeData(const char* typeName, const FieldData* pFields, size_t typeHash, int numFields, bool isBasicType = false);
+		TypeData(const char* typeName, const FieldData* pFields, uint32_t typeHash, int numFields, bool isBasicType = false);
 		TypeData(const char* typeName, size_t enumTypeHash);
 		virtual ~TypeData();
 
 		const char* TypeName() const;
-		const size_t TypeHash() const;
+		const uint32_t TypeHash() const;
 		const int FieldCount() const;
 		const bool IsBasicType() const;
 		const FieldData* GetFieldData(size_t index) const;

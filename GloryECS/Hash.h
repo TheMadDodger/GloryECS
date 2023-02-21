@@ -6,9 +6,9 @@
 
 namespace Hashing
 {
-	inline size_t Hash(const char* c)
+	inline uint32_t Hash(const char* c)
 	{
-		size_t hash = FIRSTH;
+		uint32_t hash = FIRSTH;
 		while (*c) {
 			hash = (hash * A) ^ (c[0] * B);
 			c++;

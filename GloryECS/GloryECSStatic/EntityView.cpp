@@ -59,14 +59,14 @@ namespace GloryECS
         return m_ComponentTypes[uuid];
     }
 
-    void EntityView::Add(size_t hash, Glory::UUID uuid)
+    void EntityView::Add(uint32_t hash, Glory::UUID uuid)
     {
         m_TypeToUUID.emplace(hash, uuid);
         m_ComponentTypes.emplace(uuid, hash);
         m_ComponentOrder.push_back(uuid);
     }
 
-    void EntityView::Remove(size_t hash)
+    void EntityView::Remove(uint32_t hash)
     {
         if (m_TypeToUUID.find(hash) == m_TypeToUUID.end()) return;
         Glory::UUID uuid = m_TypeToUUID[hash];
@@ -79,7 +79,7 @@ namespace GloryECS
     void EntityView::Remove(Glory::UUID uuid)
     {
         if (m_ComponentTypes.find(uuid) == m_ComponentTypes.end()) return;
-        size_t hash = m_ComponentTypes[uuid];
+        uint32_t hash = m_ComponentTypes[uuid];
         m_ComponentTypes.erase(uuid);
         m_TypeToUUID.erase(hash);
         auto it = std::find(m_ComponentOrder.begin(), m_ComponentOrder.end(), uuid);
