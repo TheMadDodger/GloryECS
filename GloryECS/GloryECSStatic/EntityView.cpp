@@ -17,12 +17,12 @@ namespace GloryECS
         return m_ComponentOrder[index];
     }
 
-    std::map<Glory::UUID, size_t>::iterator EntityView::GetIterator()
+    std::map<Glory::UUID, uint32_t>::iterator EntityView::GetIterator()
     {
         return m_ComponentTypes.begin();
     }
 
-    std::map<Glory::UUID, size_t>::iterator EntityView::GetIteratorEnd()
+    std::map<Glory::UUID, uint32_t>::iterator EntityView::GetIteratorEnd()
     {
         return m_ComponentTypes.end();
     }
@@ -47,13 +47,13 @@ namespace GloryECS
         m_ComponentOrder.insert(insertIter, uuid);
     }
 
-    size_t EntityView::ComponentTypeAt(size_t index)
+    uint32_t EntityView::ComponentTypeAt(size_t index)
     {
         Glory::UUID uuid = m_ComponentOrder[index];
         return ComponentType(uuid);
     }
 
-    size_t EntityView::ComponentType(Glory::UUID uuid)
+    uint32_t EntityView::ComponentType(Glory::UUID uuid)
     {
         if (m_ComponentTypes.find(uuid) == m_ComponentTypes.end()) return 0;
         return m_ComponentTypes[uuid];
