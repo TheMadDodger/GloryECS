@@ -73,7 +73,7 @@ namespace GloryECS
 		template<typename Component>
 		TypeView<Component>* GetTypeView()
 		{
-			size_t hash = std::hash<std::type_index>()(typeid(Component));
+			size_t hash = Hashing::Hash(typeid(Component).name());
 			if (m_pTypeViews.find(hash) == m_pTypeViews.end())
 				m_pTypeViews[hash] = new TypeView<Component>(this);
 

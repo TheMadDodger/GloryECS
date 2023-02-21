@@ -1,4 +1,5 @@
 #include "Reflection.h"
+#include "../Hash.h"
 
 namespace GloryReflect
 {
@@ -16,7 +17,7 @@ namespace GloryReflect
 
 	const TypeData* Reflect::RegisterBasicType(const std::type_info& type, size_t size, const std::string& aliasName, uint64_t flags)
 	{
-		const size_t typeHash = std::hash<std::string_view>()(type.name());
+		const size_t typeHash = Hash(type);
 		if (m_pReflectInstance->m_pTypeDatas.find(typeHash) != m_pReflectInstance->m_pTypeDatas.end()) return m_pReflectInstance->m_pTypeDatas[typeHash];
 
 		const char* typeNameString = type.name();
@@ -243,6 +244,11 @@ namespace GloryReflect
 		}
 
 		return &m_pReflectInstance->m_ArrayElementFieldDatas.at(pFieldData->ArrayElementType()).at(index);
+	}
+
+	size_t Reflect::Hash(const std::type_info& type)
+	{
+		return Hashing::Hash(type.name());
 	}
 
 	Reflect::Reflect()

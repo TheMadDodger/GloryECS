@@ -45,7 +45,7 @@ namespace GloryECS
 	class TypeView : public BaseTypeView
 	{
 	public:
-		TypeView(EntityRegistry* pRegistry) : m_Callbacks(), BaseTypeView(std::hash<std::type_index>()(typeid(T)), pRegistry) {}
+		TypeView(EntityRegistry* pRegistry) : m_Callbacks(), BaseTypeView(Hashing::Hash(typeid(T).name()), pRegistry) {}
 		virtual ~TypeView()
 		{
 			m_ComponentData.clear();

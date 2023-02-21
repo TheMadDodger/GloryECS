@@ -39,7 +39,7 @@ namespace GloryReflect
 			if (!pNewEnum->Valid())
 				throw new std::exception("Enum is not a reflectable type!");
 
-			const size_t typeHash = std::hash<std::string_view>()(typeid(T).name());
+			const size_t typeHash = Reflect::Hash<T>();
 			m_pReflectInstance->m_pEnumTypes.emplace(typeHash, pNewEnum);
 
 			return RegisterEnumType(typeid(T).name(), typeHash, aliasName, flags);
@@ -74,6 +74,14 @@ namespace GloryReflect
 		static size_t GetCustomTypeHash(size_t hash);
 
 		static const FieldData* GetArrayElementData(const FieldData* pFieldData, size_t index);
+
+		template<typename T>
+		static size_t Hash()
+		{
+			return Hash(typeid(T));
+		}
+
+		static size_t Hash(const std::type_info& type);
 
 	private:
 		Reflect();

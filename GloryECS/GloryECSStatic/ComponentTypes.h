@@ -2,6 +2,7 @@
 #include "TypeView.h"
 #include <map>
 #include <string>
+#include "../Hash.h"
 
 namespace GloryECS
 {
@@ -28,7 +29,7 @@ namespace GloryECS
 		{
 			TypeView<T>* pTypeView = new TypeView<T>(nullptr);
 			std::type_index type = typeid(T);
-			size_t hash = std::hash<std::type_index>()(type);
+			size_t hash = Hashing::Hash(type.name());
 			m_pInstance->m_TypeHashes.push_back(hash);
 			std::string name = type.name();
 			AddTypeView(name, hash, pTypeView);
@@ -50,7 +51,7 @@ namespace GloryECS
 		template<typename T>
 		static TypeView<T>* CreateTypeView(EntityRegistry* pRegistry)
 		{
-			size_t hash = std::hash<std::type_index>()(typeid(T));
+			size_t hash = Hashing::Hash(typeid(T).name());
 			return CreateTypeView(pRegistry, hash);
 		}
 

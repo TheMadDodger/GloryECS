@@ -62,14 +62,16 @@ int main()
 
 
         // ECS demo
+        GloryECS::ComponentTypes::RegisterComponent<Position>();
         GloryECS::ComponentTypes::RegisterComponent<ReflectableComponent>();
+        GloryECS::ComponentTypes::RegisterComponent<MyComponent>();
 
         GloryECS::EntityRegistry reg;
         reg.RegisterInvokaction<ReflectableComponent>(GloryECS::InvocationType::OnAdd, ReflectableComponent_OnAdd);
         reg.RegisterInvokaction<Position>(GloryECS::InvocationType::OnAdd, Position_OnAdd);
         reg.RegisterInvokaction<MyComponent>(GloryECS::InvocationType::OnAdd, MyComponent_OnAdd);
         GloryECS::EntityID entity = reg.CreateEntity();
-        reg.CreateComponent(entity, std::hash<std::type_index>()(typeid(ReflectableComponent)), Glory::UUID());
+        reg.CreateComponent(entity, GloryReflect::Reflect::Hash(typeid(ReflectableComponent)), Glory::UUID());
 
         entity = reg.CreateEntity<Position>();
         Position& position = reg.GetComponent<Position>(entity);
