@@ -18,7 +18,7 @@ namespace GloryReflect
 
 	private:
 		friend class Reflect;
-		const size_t m_TypeHash;
+		const uint32_t m_TypeHash;
 	};
 
 	template<typename T>

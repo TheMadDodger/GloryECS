@@ -16,7 +16,7 @@ namespace GloryECS
 			: m_Name(name), m_TypeHash(typeHash), m_AllowMultiple(allowMultiple), m_CustomFags(customFlags) {}
 
 		const std::string m_Name;
-		const size_t m_TypeHash;
+		const uint32_t m_TypeHash;
 		const bool m_AllowMultiple;
 		const uint64_t m_CustomFags;
 	};

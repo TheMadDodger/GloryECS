@@ -32,7 +32,7 @@ namespace GloryECS
 		virtual void OnRemove(size_t index) = 0;
 
 	protected:
-		const size_t m_TypeHash;
+		const uint32_t m_TypeHash;
 		std::vector<EntityID> m_Entities;
 		EntityRegistry* m_pRegistry;
 

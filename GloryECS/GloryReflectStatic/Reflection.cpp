@@ -124,12 +124,12 @@ namespace GloryReflect
 		return m_pReflectInstance->m_FieldFlags[pFieldData];
 	}
 
-	std::map<size_t, const TypeData*>::iterator Reflect::GetTypeIterator()
+	std::map<uint32_t, const TypeData*>::iterator Reflect::GetTypeIterator()
 	{
 		return m_pReflectInstance->m_pTypeDatas.begin();
 	}
 
-	std::map<size_t, const TypeData*>::iterator Reflect::GetTypeIteratorEnd()
+	std::map<uint32_t, const TypeData*>::iterator Reflect::GetTypeIteratorEnd()
 	{
 		return m_pReflectInstance->m_pTypeDatas.end();
 	}
@@ -197,19 +197,19 @@ namespace GloryReflect
 		m_pReflectInstance = pInstance;
 	}
 
-	void Reflect::ResizeArray(void* pArrayAddress, size_t elementTypeHash, size_t newSize)
+	void Reflect::ResizeArray(void* pArrayAddress, uint32_t elementTypeHash, size_t newSize)
 	{
 		if (m_pReflectInstance->m_pArrayTypes.find(elementTypeHash) == m_pReflectInstance->m_pArrayTypes.end()) return;
 		m_pReflectInstance->m_pArrayTypes[elementTypeHash]->Resize(pArrayAddress, newSize);
 	}
 
-	const size_t Reflect::ArraySize(void* pArrayAddress, size_t elementTypeHash)
+	const size_t Reflect::ArraySize(void* pArrayAddress, uint32_t elementTypeHash)
 	{
 		if (m_pReflectInstance->m_pArrayTypes.find(elementTypeHash) == m_pReflectInstance->m_pArrayTypes.end()) return 0;
 		return m_pReflectInstance->m_pArrayTypes[elementTypeHash]->Size(pArrayAddress);
 	}
 
-	void* Reflect::ElementAddress(void* pArrayAddress, size_t elementTypeHash, size_t index)
+	void* Reflect::ElementAddress(void* pArrayAddress, uint32_t elementTypeHash, size_t index)
 	{
 		if (m_pReflectInstance->m_pArrayTypes.find(elementTypeHash) == m_pReflectInstance->m_pArrayTypes.end()) return 0;
 		return m_pReflectInstance->m_pArrayTypes[elementTypeHash]->ElementAddress(pArrayAddress, index);
@@ -233,7 +233,7 @@ namespace GloryReflect
 	const FieldData* Reflect::GetArrayElementData(const FieldData* pFieldData, size_t index)
 	{
 		if (m_pReflectInstance->m_ArrayElementFieldDatas.find(pFieldData->ArrayElementType()) == m_pReflectInstance->m_ArrayElementFieldDatas.end())
-			m_pReflectInstance->m_ArrayElementFieldDatas.emplace(pFieldData->ArrayElementType(), std::map<size_t, const FieldData>());
+			m_pReflectInstance->m_ArrayElementFieldDatas.emplace(pFieldData->ArrayElementType(), std::map<uint32_t, const FieldData>());
 
 		if (m_pReflectInstance->m_ArrayElementFieldDatas.at(pFieldData->ArrayElementType()).find(index)
 			== m_pReflectInstance->m_ArrayElementFieldDatas.at(pFieldData->ArrayElementType()).end())
@@ -246,12 +246,12 @@ namespace GloryReflect
 		return &m_pReflectInstance->m_ArrayElementFieldDatas.at(pFieldData->ArrayElementType()).at(index);
 	}
 
-	size_t Reflect::Hash(const std::type_info& type)
+	uint32_t Reflect::Hash(const std::type_info& type)
 	{
 		return Hashing::Hash(type.name());
 	}
 
-	size_t Reflect::Hash(const char* str)
+	uint32_t Reflect::Hash(const char* str)
 	{
 		return Hashing::Hash(str);
 	}

@@ -54,8 +54,8 @@ namespace GloryReflect
 		static const uint64_t GetTypeFlags(uint32_t hash);
 		static void SetFieldFlags(const FieldData* pFieldData, uint64_t flags = 0);
 		static uint64_t GetFieldFlags(const FieldData* pFieldData);
-		static std::map<size_t, const TypeData*>::iterator GetTypeIterator();
-		static std::map<size_t, const TypeData*>::iterator GetTypeIteratorEnd();
+		static std::map<uint32_t, const TypeData*>::iterator GetTypeIterator();
+		static std::map<uint32_t, const TypeData*>::iterator GetTypeIteratorEnd();
 
 		static std::any CreateAsValue(uint32_t hash);
 		static void* CreateAsPointer(uint32_t hash);
@@ -65,9 +65,9 @@ namespace GloryReflect
 		static void DestroyReflectInstance();
 		static void SetReflectInstance(Reflect* pInstance);
 
-		static void ResizeArray(void* pArrayAddress, size_t elementTypeHash, size_t newSize);
-		static const size_t ArraySize(void* pArrayAddress, size_t elementTypeHash);
-		static void* ElementAddress(void* pArrayAddress, size_t elementTypeHash, size_t index);
+		static void ResizeArray(void* pArrayAddress, uint32_t elementTypeHash, size_t newSize);
+		static const size_t ArraySize(void* pArrayAddress, uint32_t elementTypeHash);
+		static void* ElementAddress(void* pArrayAddress, uint32_t elementTypeHash, size_t index);
 
 		static EnumType* GetEnumType(uint32_t hash);
 
@@ -102,15 +102,15 @@ namespace GloryReflect
 		}
 
 	private:
-		std::map<size_t, const TypeData*> m_pTypeDatas;
+		std::map<uint32_t, const TypeData*> m_pTypeDatas;
 		std::vector<const TypeData*> m_pManagedTypeDatas;
 		std::map<std::string, size_t> m_StringToTypeHash;
-		std::map<size_t, uint64_t> m_DataTypeFlags;
+		std::map<uint32_t, uint64_t> m_DataTypeFlags;
 		std::map<const FieldData*, uint64_t> m_FieldFlags;
-		std::map<size_t, const FactoryBase*> m_pFactories;
-		std::map<size_t, const ArrayTypeBase*> m_pArrayTypes;
-		std::map<size_t, EnumType*> m_pEnumTypes;
-		std::map<size_t, std::map<size_t, const FieldData>> m_ArrayElementFieldDatas;
+		std::map<uint32_t, const FactoryBase*> m_pFactories;
+		std::map<uint32_t, const ArrayTypeBase*> m_pArrayTypes;
+		std::map<uint32_t, EnumType*> m_pEnumTypes;
+		std::map<uint32_t, std::map<uint32_t, const FieldData>> m_ArrayElementFieldDatas;
 
 		static Reflect* m_pReflectInstance;
 		static bool m_InstanceOwned;
