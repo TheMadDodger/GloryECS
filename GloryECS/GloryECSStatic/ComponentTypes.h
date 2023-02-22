@@ -39,7 +39,7 @@ namespace GloryECS
 		static ComponentTypes* CreateInstance();
 		static void DestroyInstance();
 		static void SetInstance(ComponentTypes* pInstance);
-		static size_t GetComponentHash(const std::string& name);
+		static uint32_t GetComponentHash(const std::string& name);
 		static const size_t ComponentCount();
 		static const ComponentType* GetComponentType(const uint32_t hash);
 		static const ComponentType* GetComponentTypeAt(const size_t index);
@@ -67,9 +67,9 @@ namespace GloryECS
 		static ComponentTypes* m_pInstance;
 		static bool m_InstanceOwned;
 
-		std::vector<size_t> m_TypeHashes;
-		std::map<size_t, BaseTypeView*> m_pTypeViewTemplates;
-		std::map<std::string, size_t> m_NameToHash;
-		std::map<size_t, ComponentType> m_ComponentTypes;
+		std::vector<uint32_t> m_TypeHashes;
+		std::map<uint32_t, BaseTypeView*> m_pTypeViewTemplates;
+		std::map<std::string, uint32_t> m_NameToHash;
+		std::map<uint32_t, ComponentType> m_ComponentTypes;
 	};
 }

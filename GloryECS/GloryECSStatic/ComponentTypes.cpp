@@ -25,7 +25,7 @@ namespace GloryECS
 		m_pInstance = pInstance;
 	}
 
-	size_t ComponentTypes::GetComponentHash(const std::string& name)
+	uint32_t ComponentTypes::GetComponentHash(const std::string& name)
 	{
 		if (m_pInstance->m_NameToHash.find(name) == m_pInstance->m_NameToHash.end()) return 0;
 		return m_pInstance->m_NameToHash[name];
