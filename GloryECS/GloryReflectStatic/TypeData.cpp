@@ -35,7 +35,7 @@ namespace GloryReflect
 		return m_TypeHash;
 	}
 
-	const int TypeData::FieldCount() const
+	const size_t TypeData::FieldCount() const
 	{
 		return m_FieldCount;
 	}

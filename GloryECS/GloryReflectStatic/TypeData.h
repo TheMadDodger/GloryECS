@@ -12,14 +12,14 @@ namespace GloryReflect
 
 		const char* TypeName() const;
 		const uint32_t TypeHash() const;
-		const int FieldCount() const;
+		const size_t FieldCount() const;
 		const bool IsBasicType() const;
 		const FieldData* GetFieldData(size_t index) const;
 
 	private:
 		const char* m_TypeName;
 		const uint32_t m_TypeHash;
-		const int m_FieldCount;
+		const size_t m_FieldCount;
 		const bool m_BasicType;
 		const FieldData* m_pFields;
 	};
