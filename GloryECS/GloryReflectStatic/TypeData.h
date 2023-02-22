@@ -7,7 +7,7 @@ namespace GloryReflect
 	{
 	public:
 		TypeData(const char* typeName, const FieldData* pFields, uint32_t typeHash, int numFields, bool isBasicType = false);
-		TypeData(const char* typeName, size_t enumTypeHash);
+		TypeData(const char* typeName, uint32_t enumTypeHash);
 		virtual ~TypeData();
 
 		const char* TypeName() const;

@@ -30,7 +30,7 @@ namespace GloryReflect
 		return pTypeData;
 	}
 
-	const TypeData* Reflect::RegisterEnumType(const char* typeName, size_t enumTypeHash, const std::string& aliasName, uint64_t flags)
+	const TypeData* Reflect::RegisterEnumType(const char* typeName, uint32_t enumTypeHash, const std::string& aliasName, uint64_t flags)
 	{
 		const TypeData* pTypeData = new TypeData(typeName, enumTypeHash);
 		RegisterType(enumTypeHash, pTypeData, flags);
@@ -221,19 +221,19 @@ namespace GloryReflect
 		return m_pReflectInstance->m_pEnumTypes[hash];
 	}
 
-	size_t Reflect::GetCustomTypeHash(uint32_t hash)
+	uint32_t Reflect::GetCustomTypeHash(uint32_t hash)
 	{
 		if (hash <= 100) return hash;
-		if (GetEnumType(hash)) return (size_t)CustomTypeHash::Enum;
+		if (GetEnumType(hash)) return (uint32_t)CustomTypeHash::Enum;
 		const TypeData* pTypeData = GetTyeData(hash);
-		if (pTypeData && !pTypeData->IsBasicType()) return (size_t)CustomTypeHash::Struct;
+		if (pTypeData && !pTypeData->IsBasicType()) return (uint32_t)CustomTypeHash::Struct;
 		return hash;
 	}
 
 	const FieldData* Reflect::GetArrayElementData(const FieldData* pFieldData, size_t index)
 	{
 		if (m_pReflectInstance->m_ArrayElementFieldDatas.find(pFieldData->ArrayElementType()) == m_pReflectInstance->m_ArrayElementFieldDatas.end())
-			m_pReflectInstance->m_ArrayElementFieldDatas.emplace(pFieldData->ArrayElementType(), std::map<uint32_t, const FieldData>());
+			m_pReflectInstance->m_ArrayElementFieldDatas.emplace(pFieldData->ArrayElementType(), std::map<size_t, const FieldData>());
 
 		if (m_pReflectInstance->m_ArrayElementFieldDatas.at(pFieldData->ArrayElementType()).find(index)
 			== m_pReflectInstance->m_ArrayElementFieldDatas.at(pFieldData->ArrayElementType()).end())

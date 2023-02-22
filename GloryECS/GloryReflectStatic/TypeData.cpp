@@ -12,7 +12,7 @@ namespace GloryReflect
 	{
 	}
 
-	TypeData::TypeData(const char* typeName, size_t enumTypeHash) :
+	TypeData::TypeData(const char* typeName, uint32_t enumTypeHash) :
 		m_TypeName(typeName),
 		m_pFields(new FieldData((size_t)CustomTypeHash::Enum, enumTypeHash, "m_value", typeName, 0, sizeof(size_t))),
 		m_TypeHash(enumTypeHash),

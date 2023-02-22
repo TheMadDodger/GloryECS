@@ -71,7 +71,7 @@ namespace GloryReflect
 
 		static EnumType* GetEnumType(uint32_t hash);
 
-		static size_t GetCustomTypeHash(uint32_t hash);
+		static uint32_t GetCustomTypeHash(uint32_t hash);
 
 		static const FieldData* GetArrayElementData(const FieldData* pFieldData, size_t index);
 
@@ -90,7 +90,7 @@ namespace GloryReflect
 
 		static void RegisterType(uint32_t hash, const TypeData* pTypeData, uint64_t flags = 0);
 		static const TypeData* RegisterBasicType(const std::type_info& type, size_t size, const std::string& aliasName, uint64_t flags);
-		static const TypeData* RegisterEnumType(const char* typeName, size_t enumTypeHash, const std::string& aliasName, uint64_t flags);
+		static const TypeData* RegisterEnumType(const char* typeName, uint32_t enumTypeHash, const std::string& aliasName, uint64_t flags);
 
 		static void Tokenize(std::string str, std::vector<std::string>& tokens, char separator = ',');
 
@@ -104,13 +104,13 @@ namespace GloryReflect
 	private:
 		std::map<uint32_t, const TypeData*> m_pTypeDatas;
 		std::vector<const TypeData*> m_pManagedTypeDatas;
-		std::map<std::string, size_t> m_StringToTypeHash;
+		std::map<std::string, uint32_t> m_StringToTypeHash;
 		std::map<uint32_t, uint64_t> m_DataTypeFlags;
 		std::map<const FieldData*, uint64_t> m_FieldFlags;
 		std::map<uint32_t, const FactoryBase*> m_pFactories;
 		std::map<uint32_t, const ArrayTypeBase*> m_pArrayTypes;
 		std::map<uint32_t, EnumType*> m_pEnumTypes;
-		std::map<uint32_t, std::map<uint32_t, const FieldData>> m_ArrayElementFieldDatas;
+		std::map<uint32_t, std::map<size_t, const FieldData>> m_ArrayElementFieldDatas;
 
 		static Reflect* m_pReflectInstance;
 		static bool m_InstanceOwned;
