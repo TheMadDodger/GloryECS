@@ -15,6 +15,7 @@ namespace GloryReflect
 		const size_t FieldCount() const;
 		const bool IsBasicType() const;
 		const FieldData* GetFieldData(size_t index) const;
+		const bool IsEnum() const;
 
 	private:
 		const char* m_TypeName;
@@ -22,5 +23,6 @@ namespace GloryReflect
 		const size_t m_FieldCount;
 		const bool m_BasicType;
 		const FieldData* m_pFields;
+		const bool m_IsEnum;
 	};
 }

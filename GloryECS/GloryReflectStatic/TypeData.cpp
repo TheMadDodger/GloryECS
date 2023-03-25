@@ -8,7 +8,8 @@ namespace GloryReflect
 		m_pFields(pFields),
 		m_TypeHash(typeHash),
 		m_FieldCount(numFields),
-		m_BasicType(isBasicType)
+		m_BasicType(isBasicType),
+		m_IsEnum(false)
 	{
 	}
 
@@ -17,7 +18,8 @@ namespace GloryReflect
 		m_pFields(new FieldData((size_t)CustomTypeHash::Enum, enumTypeHash, "m_value", typeName, 0, sizeof(size_t))),
 		m_TypeHash(enumTypeHash),
 		m_FieldCount(1),
-		m_BasicType(false)
+		m_BasicType(false),
+		m_IsEnum(true)
 	{
 	}
 
@@ -48,5 +50,10 @@ namespace GloryReflect
 	const FieldData* TypeData::GetFieldData(size_t index) const
 	{
 		return &m_pFields[index];
+	}
+
+	const bool TypeData::IsEnum() const
+	{
+		return m_IsEnum;
 	}
 }
