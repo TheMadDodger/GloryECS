@@ -7,9 +7,11 @@
 
 namespace GloryECS
 {
-	EntityRegistry::EntityRegistry() : m_NextEntityID(1)
+	EntityRegistry::EntityRegistry() : m_NextEntityID(1), m_pUserData(nullptr)
 	{
 	}
+
+	EntityRegistry::EntityRegistry(void* pUserData) : m_NextEntityID(1), m_pUserData(pUserData) {}
 
 	EntityRegistry::~EntityRegistry()
 	{
@@ -25,6 +27,8 @@ namespace GloryECS
 
 		m_pEntityViews.clear();
 		m_pTypeViews.clear();
+
+		m_pUserData = nullptr;
 	}
 
 	EntityID EntityRegistry::CreateEntity()

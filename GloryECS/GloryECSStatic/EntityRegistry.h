@@ -13,6 +13,7 @@ namespace GloryECS
 	{
 	public:
 		EntityRegistry();
+		EntityRegistry(void* pUserData);
 		virtual ~EntityRegistry();
 
 		EntityID CreateEntity();
@@ -149,6 +150,13 @@ namespace GloryECS
 		void InvokeAll(uint32_t typeHash, InvocationType invocationType);
 		void InvokeAll(InvocationType invocationType);
 
+		template<typename T>
+		T GetUserData()
+		{
+			if (!m_pUserData) return nullptr;
+			return static_cast<T>(m_pUserData);
+		}
+
 		//void ForEach(std::function<void(EntityRegistry*, EntityID)> func);
 		//void ForEachComponent(EntityID entity, std::function<void(EntityRegistry*, EntityID, size_t, size_t)> func);
 		//
@@ -186,6 +194,8 @@ namespace GloryECS
 
 		// Basic type views
 		std::map<size_t, BaseTypeView*> m_pTypeViews;
+
+		void* m_pUserData;
 
 		//EntitySystems m_Systems;
 	};
