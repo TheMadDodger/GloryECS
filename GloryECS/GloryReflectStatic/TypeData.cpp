@@ -3,13 +3,12 @@
 
 namespace GloryReflect
 {
-	TypeData::TypeData(const char* typeName, const FieldData* pFields, uint32_t typeHash, int numFields, bool isBasicType) :
+	TypeData::TypeData(const char* typeName, const FieldData* pFields, uint32_t internalTypeHash, uint32_t typeHash, int numFields) :
 		m_TypeName(typeName),
 		m_pFields(pFields),
 		m_TypeHash(typeHash),
 		m_FieldCount(numFields),
-		m_BasicType(isBasicType),
-		m_IsEnum(false)
+		m_InternalTypeHash(internalTypeHash)
 	{
 	}
 
@@ -18,8 +17,7 @@ namespace GloryReflect
 		m_pFields(new FieldData((size_t)CustomTypeHash::Enum, enumTypeHash, "m_value", typeName, 0, sizeof(size_t))),
 		m_TypeHash(enumTypeHash),
 		m_FieldCount(1),
-		m_BasicType(false),
-		m_IsEnum(true)
+		m_InternalTypeHash(uint32_t(CustomTypeHash::Enum))
 	{
 	}
 
@@ -32,6 +30,11 @@ namespace GloryReflect
 		return m_TypeName;
 	}
 
+	const uint32_t TypeData::InternalTypeHash() const
+	{
+		return m_InternalTypeHash;
+	}
+
 	const uint32_t TypeData::TypeHash() const
 	{
 		return m_TypeHash;
@@ -42,18 +45,8 @@ namespace GloryReflect
 		return m_FieldCount;
 	}
 
-	const bool TypeData::IsBasicType() const
-	{
-		return m_BasicType;
-	}
-
 	const FieldData* TypeData::GetFieldData(size_t index) const
 	{
 		return &m_pFields[index];
-	}
-
-	const bool TypeData::IsEnum() const
-	{
-		return m_IsEnum;
 	}
 }

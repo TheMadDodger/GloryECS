@@ -25,7 +25,7 @@ public:\
 		static const GloryReflect::FieldData pFields[] = {\
 			FOR_EACH(REFLECT_FIELD_INFO, __VA_ARGS__)\
 		};\
-		static const GloryReflect::TypeData pTypeData = GloryReflect::TypeData(typeNameString, pFields, TYPE_HASH, NUM_ARGS);\
+		static const GloryReflect::TypeData pTypeData = GloryReflect::TypeData(typeNameString, pFields, uint32_t(GloryReflect::CustomTypeHash::Struct), TYPE_HASH, NUM_ARGS);\
 		return &pTypeData;\
 	}
 

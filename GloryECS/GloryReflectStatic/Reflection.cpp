@@ -22,7 +22,7 @@ namespace GloryReflect
 
 		const char* typeNameString = type.name();
 		const FieldData* pFields = new FieldData(typeHash, typeHash, BASIC_VALUE_NAME, typeNameString, 0, size);
-		const TypeData* pTypeData = new TypeData(typeNameString, pFields, typeHash, 1, true);
+		const TypeData* pTypeData = new TypeData(typeNameString, pFields, uint32_t(CustomTypeHash::Basic), typeHash, 1);
 
 		RegisterType(typeHash, pTypeData, flags);
 		m_pReflectInstance->m_pManagedTypeDatas.push_back(pTypeData);
@@ -67,7 +67,7 @@ namespace GloryReflect
 		{
 			FieldData(TYPE_HASH, BASIC_VALUE_NAME, typeNameString, 0, size)
 		};
-		const TypeData* pTypeData = new TypeData(typeName, pFields, TYPE_HASH, NUM_ARGS);
+		const TypeData* pTypeData = new TypeData(typeName, pFields, TYPE_HASH, TYPE_HASH, NUM_ARGS);
 
 		m_pReflectInstance->m_pTypeDatas.emplace(TYPE_HASH, pTypeData);
 		m_pReflectInstance->m_DataTypeFlags.emplace(TYPE_HASH, 0);
@@ -224,10 +224,8 @@ namespace GloryReflect
 	uint32_t Reflect::GetCustomTypeHash(uint32_t hash)
 	{
 		if (hash <= 100) return hash;
-		if (GetEnumType(hash)) return (uint32_t)CustomTypeHash::Enum;
 		const TypeData* pTypeData = GetTyeData(hash);
-		if (pTypeData && !pTypeData->IsBasicType()) return (uint32_t)CustomTypeHash::Struct;
-		return hash;
+		return pTypeData ? pTypeData->InternalTypeHash() : hash;
 	}
 
 	const FieldData* Reflect::GetArrayElementData(const FieldData* pFieldData, size_t index)
