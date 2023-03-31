@@ -1,5 +1,6 @@
 #pragma once
 #include "FieldData.h"
+#include <string>
 
 namespace GloryReflect
 {
@@ -15,6 +16,7 @@ namespace GloryReflect
 		const uint32_t TypeHash() const;
 		const size_t FieldCount() const;
 		const FieldData* GetFieldData(size_t index) const;
+		const FieldData* GetFieldData(const std::string& name) const;
 
 	private:
 		const char* m_TypeName;

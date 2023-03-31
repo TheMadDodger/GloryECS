@@ -49,4 +49,15 @@ namespace GloryReflect
 	{
 		return &m_pFields[index];
 	}
+
+	const FieldData* TypeData::GetFieldData(const std::string& name) const
+	{
+		for (size_t i = 0; i < m_FieldCount; ++i)
+		{
+			if (m_pFields[i].Name() != name) continue;
+			return &m_pFields[i];
+		}
+
+		return nullptr;
+	}
 }
