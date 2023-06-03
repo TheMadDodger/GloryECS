@@ -3,7 +3,7 @@
 
 namespace GloryECS
 {
-    EntityView::EntityView(EntityRegistry* pRegistry) : m_pRegistry(pRegistry)
+    EntityView::EntityView(EntityRegistry* pRegistry) : m_pRegistry(pRegistry), m_Active(true), m_HierarchyActive(true)
     {
     }
 
@@ -45,6 +45,21 @@ namespace GloryECS
         m_ComponentOrder.erase(eraseIter);
         auto insertIter = m_ComponentOrder.begin() + newIndex;
         m_ComponentOrder.insert(insertIter, uuid);
+    }
+
+    bool& EntityView::Active()
+    {
+        return m_Active;
+    }
+
+    bool& EntityView::HierarchyActive()
+    {
+        return m_HierarchyActive;
+    }
+
+    bool EntityView::IsActive()
+    {
+        return m_HierarchyActive && m_Active;
     }
 
     uint32_t EntityView::ComponentTypeAt(size_t index)

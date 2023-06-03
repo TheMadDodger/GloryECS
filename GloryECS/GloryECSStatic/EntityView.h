@@ -21,6 +21,10 @@ namespace GloryECS
 		void SwapComponentIndex(size_t index1, size_t index2);
 		void SetComponentIndex(size_t oldIndex, size_t newIndex);
 
+		bool& Active();
+		bool& HierarchyActive();
+		bool IsActive();
+
 	private:
 		void Add(uint32_t hash, Glory::UUID uuid = Glory::UUID());
 		void Remove(uint32_t hash);
@@ -32,5 +36,7 @@ namespace GloryECS
 		std::map<Glory::UUID, uint32_t> m_ComponentTypes;
 		std::map<uint32_t, Glory::UUID> m_TypeToUUID;
 		std::vector<Glory::UUID> m_ComponentOrder;
+		bool m_Active;
+		bool m_HierarchyActive;
 	};
 }

@@ -105,6 +105,7 @@ namespace GloryECS
 
 		void Invoke(const InvocationType& callbackType, EntityRegistry* pRegistry, EntityID entity, void* pComponentAddress) override
 		{
+			if (!pRegistry->GetEntityView(entity)->IsActive()) return;
 			T* pComponent = (T*)pComponentAddress;
 			m_Callbacks.Invoke(callbackType, pRegistry, entity, *pComponent);
 		}
@@ -115,6 +116,7 @@ namespace GloryECS
 			{
 				T& component = m_ComponentData[i];
 				EntityID entity = m_Entities[i];
+				if (!pRegistry->GetEntityView(entity)->IsActive()) continue;
 				m_Callbacks.Invoke(invocationType, pRegistry, entity, component);
 			}
 		}
