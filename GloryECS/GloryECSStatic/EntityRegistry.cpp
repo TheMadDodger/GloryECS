@@ -1,10 +1,6 @@
 #include "EntityRegistry.h"
 #include "ComponentTypes.h"
 
-#define A 54059 /* a prime */
-#define B 76963 /* another prime */
-#define FIRSTH 37 /* also prime */
-
 namespace GloryECS
 {
 	EntityRegistry::EntityRegistry() : m_NextEntityID(1), m_pUserData(nullptr)
@@ -15,9 +11,9 @@ namespace GloryECS
 
 	EntityRegistry::~EntityRegistry()
 	{
-		for (auto it = m_pTypeViews.begin(); it != m_pTypeViews.end(); it++)
+		for (size_t i = 0; i < m_pViews.size(); ++i)
 		{
-			delete it->second;
+			delete m_pViews[i];
 		}
 		
 		for (auto it = m_pEntityViews.begin(); it != m_pEntityViews.end(); it++)
@@ -26,7 +22,8 @@ namespace GloryECS
 		}
 
 		m_pEntityViews.clear();
-		m_pTypeViews.clear();
+		m_pViews.clear();
+		m_ViewIndices.clear();
 
 		m_pUserData = nullptr;
 	}
@@ -72,10 +69,11 @@ namespace GloryECS
 
 	BaseTypeView* EntityRegistry::GetTypeView(uint32_t typeHash)
 	{
-		if (m_pTypeViews.find(typeHash) == m_pTypeViews.end())
+		if (m_ViewIndices.find(typeHash) == m_ViewIndices.end())
 			return ComponentTypes::CreateTypeView(this, typeHash);
 
-		return m_pTypeViews[typeHash];
+		const size_t index = m_ViewIndices.at(typeHash);
+		return m_pViews[index];
 	}
 
 	EntityView* EntityRegistry::GetEntityView(EntityID entity)
@@ -151,19 +149,15 @@ namespace GloryECS
 	{
 		return m_pEntityViews.find(entity) != m_pEntityViews.end();
 	}
+
 	const size_t EntityRegistry::TypeViewCount() const
 	{
-		return m_pTypeViews.size();
+		return m_pViews.size();
 	}
 
-	std::map<size_t, BaseTypeView*>::iterator EntityRegistry::GetTypeViewIterator()
+	BaseTypeView* EntityRegistry::TypeViewAt(size_t index) const
 	{
-		return m_pTypeViews.begin();
-	}
-
-	std::map<size_t, BaseTypeView*>::iterator EntityRegistry::GetTypeViewIteratorEnd()
-	{
-		return m_pTypeViews.end();
+		return m_pViews[index];
 	}
 
 	void EntityRegistry::InvokeAll(uint32_t typeHash, InvocationType invocationType)
@@ -174,9 +168,9 @@ namespace GloryECS
 
 	void EntityRegistry::InvokeAll(InvocationType invocationType)
 	{
-		for (auto it = m_pTypeViews.begin(); it != m_pTypeViews.end(); it++)
+		for (size_t i = 0; i < m_pViews.size(); ++i)
 		{
-			it->second->InvokeAll(invocationType, this);
+			m_pViews[i]->InvokeAll(invocationType, this);
 		}
 	}
 }

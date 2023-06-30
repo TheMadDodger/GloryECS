@@ -70,7 +70,9 @@ namespace GloryECS
 			throw new std::exception("Component not registered!");
 
 		BaseTypeView* pTypeView = m_pInstance->m_pTypeViewTemplates[hash]->Create(pRegistry);
-		pRegistry->m_pTypeViews.emplace(hash, pTypeView);
+		const size_t index = pRegistry->m_pViews.size();
+		pRegistry->m_pViews.push_back(pTypeView);
+		pRegistry->m_ViewIndices.emplace(hash, index);
 		return pTypeView;
 	}
 

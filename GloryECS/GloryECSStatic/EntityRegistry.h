@@ -74,11 +74,16 @@ namespace GloryECS
 		template<typename Component>
 		TypeView<Component>* GetTypeView()
 		{
-			uint32_t hash = Hashing::Hash(typeid(Component).name());
-			if (m_pTypeViews.find(hash) == m_pTypeViews.end())
-				m_pTypeViews[hash] = new TypeView<Component>(this);
+			const uint32_t hash = Hashing::Hash(typeid(Component).name());
+			if (m_ViewIndices.find(hash) == m_ViewIndices.end())
+			{
+				const size_t index = m_pViews.size();
+				m_pViews.push_back(new TypeView<Component>(this));
+				m_ViewIndices.emplace(hash, index);
+			}
 
-			TypeView<Component>* pTypeView = (TypeView<Component>*)m_pTypeViews[hash];
+			const size_t index = m_ViewIndices.at(hash);
+			TypeView<Component>* pTypeView = (TypeView<Component>*)m_pViews[index];
 			return pTypeView;
 		}
 
@@ -130,8 +135,7 @@ namespace GloryECS
 		const size_t Alive() const;
 		const bool IsValid(EntityID entity) const;
 		const size_t TypeViewCount() const;
-		std::map<size_t, BaseTypeView*>::iterator GetTypeViewIterator();
-		std::map<size_t, BaseTypeView*>::iterator GetTypeViewIteratorEnd();
+		BaseTypeView* TypeViewAt(size_t index) const;
 		
 		template<typename T>
 		void RegisterInvokaction(InvocationType invocationType, std::function<void(EntityRegistry*, EntityID, T&)> callback)
@@ -193,7 +197,8 @@ namespace GloryECS
 		EntityID m_NextEntityID;
 
 		// Basic type views
-		std::map<size_t, BaseTypeView*> m_pTypeViews;
+		std::vector<BaseTypeView*> m_pViews;
+		std::map<size_t, size_t> m_ViewIndices;
 
 		void* m_pUserData;
 
