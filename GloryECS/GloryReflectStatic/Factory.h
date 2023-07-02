@@ -2,28 +2,30 @@
 #include <any>
 #include <string>
 #include <typeindex>
+#include <functional>
 
 namespace GloryReflect
 {
 	class FactoryBase
 	{
 	public:
-		FactoryBase(size_t typeHash);
+		FactoryBase(uint32_t typeHash);
 		virtual ~FactoryBase();
 
 		virtual std::any CreateAsValue() const = 0;
 		virtual void* CreateAsPointer() const = 0;
+		virtual void CreateAsTemporary(std::function<void(void*)> callback) const = 0;
 
 	private:
 		friend class Reflect;
-		const size_t m_TypeHash;
+		const uint32_t m_TypeHash;
 	};
 
 	template<typename T>
 	class Factory : public FactoryBase
 	{
 	public:
-		Factory() : FactoryBase(std::hash<std::type_index>()(typeid(T))) {}
+		Factory() : FactoryBase(Reflect::Hash<T>()) {}
 		virtual ~Factory() {}
 
 		virtual std::any CreateAsValue() const override
@@ -34,6 +36,12 @@ namespace GloryReflect
 		virtual void* CreateAsPointer() const override
 		{
 			return new T();
+		}
+
+		virtual void CreateAsTemporary(std::function<void(void*)> callback) const
+		{
+			T value = T();
+			callback(&value);
 		}
 	};
 }

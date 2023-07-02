@@ -21,7 +21,7 @@ namespace GloryReflect
 		{
 			const auto beginIter = std::begin(m_EnumStringValues);
 			const auto endIter = std::end(m_EnumStringValues);
-			const auto iter = std::find(beginIter, endIter, str);									
+			const auto iter = std::find(beginIter, endIter, str);
 			if (iter == endIter)
 				return false;
 			const size_t index = iter - beginIter;

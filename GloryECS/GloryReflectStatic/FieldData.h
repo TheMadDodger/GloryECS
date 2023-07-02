@@ -1,9 +1,10 @@
 #pragma once
+#include <stdint.h>
 
 namespace GloryReflect
 {
-	using FieldType = size_t;
-	using ElementType = size_t;
+	using FieldType = uint32_t;
+	using ElementType = uint32_t;
 
 	struct FieldData
 	{
@@ -23,6 +24,8 @@ namespace GloryReflect
 		void Set(void* pAddress, void* value) const;
 
 		void* GetAddress(void* pAddress) const;
+
+		const FieldData* GetArrayElementFieldData(size_t index) const;
 
 	private:
 		FieldType m_Type;

@@ -89,4 +89,9 @@ namespace GloryReflect
 		char* p = (char*)pAddress;
 		return p + m_Offset;
 	}
+
+	const FieldData* FieldData::GetArrayElementFieldData(size_t index) const
+	{
+		return Reflect::GetArrayElementData(this, index);
+	}
 }
