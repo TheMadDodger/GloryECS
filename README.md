@@ -1,3 +1,5 @@
+This library is now part of the [Glory engine repository](https://github.com/TheMadDodger/Glory/tree/master) as an internal library, this repo has been discontinued.
+
 # GloryECS
 ## _Custom ECS and reflection library for [Glory](https://github.com/TheMadDodger/Glory/tree/master)_
 
